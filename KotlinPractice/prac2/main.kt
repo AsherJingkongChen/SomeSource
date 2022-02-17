@@ -1,14 +1,23 @@
 import java.math.BigDecimal
 
 class Rgb {
+    /* properties */
+
     var r: Int = 0
     var g: Int = 0
     var b: Int = 0
     var r_ratio: Double = 0.0
     var g_ratio: Double = 0.0
     var b_ratio: Double = 0.0
-    var hex: String = "#000000"
+    var hex_code: String = "#000000"
 
+    /* constructors */
+
+    /**
+     * default constructor
+     *
+     * all  properties are set to 0
+     */
     constructor ()
 
     /**
@@ -17,15 +26,18 @@ class Rgb {
      * to construct an Rgb instance
      */
     constructor (_hexColorCode: String) {
-        val hexColorCode = _hexColorCode.slice(1.._hexColorCode.length-1)
-        var decColorCodeInt = hexColorCode.toInt(16)
-        hex = hexColorCode
-        b = decColorCodeInt % 256
-        decColorCodeInt /= 256
-        g = decColorCodeInt % 256
-        decColorCodeInt /= 256
-        r = decColorCodeInt % 256
-        decColorCodeInt /= 256
+        val unhashed_hexColorCode = _hexColorCode.slice(1..(_hexColorCode.length-1))
+        var tmp_decColorCode = unhashed_hexColorCode.toInt(16)
+
+        hex_code = _hexColorCode
+
+        b = tmp_decColorCode % 256
+        tmp_decColorCode /= 256
+        g = tmp_decColorCode % 256
+        tmp_decColorCode /= 256
+        r = tmp_decColorCode % 256
+        tmp_decColorCode /= 256
+
         r_ratio = r.toDouble() / maxInteger
         g_ratio = g.toDouble() / maxInteger
         b_ratio = b.toDouble() / maxInteger
@@ -45,7 +57,6 @@ class Rgb {
      * 4. `String` (Auto Convert)
      */
     constructor (_r: Any, _g: Any, _b: Any) {
-
         val __r: Any? = if (_r is String) autoStringConvertor(_r) else _r
         val __g: Any? = if (_g is String) autoStringConvertor(_g) else _g
         val __b: Any? = if (_b is String) autoStringConvertor(_b) else _b
@@ -55,48 +66,29 @@ class Rgb {
         }
 
         when (__r) {
-            is Int -> {
-                r = __r
-                r_ratio = __r.toDouble() / maxInteger
-            }
-            is Float -> {
-                r = (__r * maxInteger).toInt()
-                r_ratio = __r.toDouble()
-            }
-            is Double -> {
-                r = (__r * maxInteger).toInt()
-                r_ratio = __r
-            }
+            is Int -> { r = __r }
+            is Float -> { r = (__r * maxInteger).toInt() }
+            is Double -> { r = (__r * maxInteger).toInt() }
         }
         when (__g) {
-            is Int -> {
-                g = __g
-                g_ratio = __g.toDouble() / maxInteger
-            }
-            is Float -> {
-                g = (__g * maxInteger).toInt()
-                g_ratio = __g.toDouble()
-            }
-            is Double -> {
-                g = (__g * maxInteger).toInt()
-                g_ratio = __g
-            }
+            is Int -> { g = __g }
+            is Float -> { g = (__g * maxInteger).toInt() }
+            is Double -> { g = (__g * maxInteger).toInt() }
         }
         when (__b) {
-            is Int -> {
-                b = __b
-                b_ratio = __b.toDouble() / maxInteger
-            }
-            is Float -> {
-                b = (__b * maxInteger).toInt()
-                b_ratio = __b.toDouble()
-            }
-            is Double -> {
-                b = (__b * maxInteger).toInt()
-                b_ratio = __b
-            }
+            is Int -> { b = __b }
+            is Float -> { b = (__b * maxInteger).toInt() }
+            is Double -> { b = (__b * maxInteger).toInt() }
         }
+
+        r_ratio = r.toDouble() / maxInteger
+        g_ratio = g.toDouble() / maxInteger
+        b_ratio = b.toDouble() / maxInteger
+
+        hex_code = "#%02X%02X%02X".format(r, g, b)
     }
+
+    /* public methods */
 
     /**
      * "`Rgb(r, g, b)`"
@@ -116,16 +108,9 @@ class Rgb {
      */
     fun toHexString(UPPERCASE_MODE: Boolean = true): String {
         return if (UPPERCASE_MODE)
-            "#" +
-            "%02X".format(r) +
-            "%02X".format(g) +
-            "%02X".format(b)
+            "#%02X%02X%02X".format(r, g, b)
         else
-            "#" +
-            "%02x".format(r) +
-            "%02x".format(g) +
-            "%02x".format(b)
-
+            "#%02x%02x%02x".format(r, g, b)
     }
 
     /**
@@ -155,6 +140,52 @@ class Rgb {
 
     }
 
+    /* private methods */
+
+    /**
+     * Range validation
+     *
+     * 1. `Int` (0 ~ 255),
+     *
+     * 2. `Float` (0.0f ~ 1.0f),
+     *
+     * 3. `Double` (0.0 ~ 1.0)
+     */
+    protected fun isFit (n: Any?): Boolean {
+        when (n) {
+            is Int -> return (n in minInteger..maxInteger)
+            is Float -> return (minFloat <= n && n <= maxFloat)
+            is Double -> return (minDouble <= n && n <= maxDouble)
+            else -> return false
+        }
+    }
+
+    /**
+     * auto `String` conversion handler
+     *
+     * return `null` when failed to convert
+     */
+    protected fun autoStringConvertor(str: String): Any? {
+        val testDec: Int? = str.toIntOrNull(10)
+        val testFixed: Double? = str.toDoubleOrNull()
+        val testHex: Int? = str.toIntOrNull(16)
+        if( testDec != null ) return testDec
+        if( testFixed != null ) return testFixed
+        if( testHex != null ) return testHex
+        return null
+    }
+
+    /* arguments */
+
+    val maxInteger: Int = 255
+    val minInteger: Int = 0
+    val maxFloat: Float = 1f
+    val minFloat: Float = 0f
+    val maxDouble: Double = 1.0
+    val minDouble: Double = 0.0
+
+    /* Common operation methods */
+
     /**
      * Rgb { r, g, b, r_ratio, g_ratio, b_ratio }
      */
@@ -165,7 +196,8 @@ class Rgb {
                 "b: ${b}, " + "\n\t" +
                 "r_ratio: ${r_ratio}, " + "\n\t" +
                 "g_ratio: ${g_ratio}, " + "\n\t" +
-                "b_ratio: ${b_ratio} " + "\n" +
+                "b_ratio: ${b_ratio}, " + "\n\t" +
+                "hex_code: ${hex_code} " + "\n" +
                 "}"
     }
 
@@ -174,9 +206,7 @@ class Rgb {
      */
     override fun equals(other: Any?): Boolean {
         return if (other is Rgb)
-            (r == other.r
-            && g == other.g
-            && b == other.b)
+            hex_code == other.hex_code
         else false
     }
 
@@ -190,56 +220,29 @@ class Rgb {
         return result
     }
 
+    /* static methods and members */
+
     companion object {
-
-        /**
-         * Range validation
-         *
-         * 1. `Int` (0 ~ 255),
-         *
-         * 2. `Float` (0.0f ~ 1.0f),
-         *
-         * 3. `Double` (0.0 ~ 1.0),
-         *
-         * 4. `String` (Auto Convert)
-         */
-        fun isFit (n: Any?): Boolean {
-            when (n) {
-                is Int -> return (n in minInteger..maxInteger)
-                is Float -> return (minFloat <= n && n <= maxFloat)
-                is Double -> return (minDouble <= n && n <= maxDouble)
-                else -> return false
-            }
-        }
-
-        /**
-         * auto `String` convertion handler
-         *
-         * return `null` when failed to convert
-         */
-        fun autoStringConvertor(str: String): Any? {
-            val testDec: Int? = str.toIntOrNull(10)
-            val testFixed: Double? = str.toDoubleOrNull()
-            val testHex: Int? = str.toIntOrNull(16)
-            if( testDec != null ) return testDec
-            if( testFixed != null ) return testFixed
-            if( testHex != null ) return testHex
-            return null
-        }
-
-        const val maxInteger: Int = 255
-        const val minInteger: Int = 0
-        const val maxFloat: Float = 1f
-        const val minFloat: Float = 0f
-        const val maxDouble: Double = 1.0
-        const val minDouble: Double = 0.0
     }
 }
 fun main() {
-    val R = 0.301
-    val G = 245
-    val B = 1
-    val a = Rgb(R,G,B)
-    val b = Rgb()
+    val Rn = 0.301f
+    val Gn = 245
+    val Bn = 1
+    val a = Rgb(Rn, Gn, Bn)
+    val b = Rgb(a.toHexString())
+    
+    /* general test */
     println(a)
+    println(a.toDecString())
+    println(a.toRatioString())
+    println(a.toRatioString(2,true))
+    println(a.toHexString())
+    println()
+    println(b)
+    println(b.toDecString())
+    println(b.toRatioString(5))
+    println(b.toRatioString(2,true))
+    println(b.toHexString(false))
+    /* general test end */
 }
