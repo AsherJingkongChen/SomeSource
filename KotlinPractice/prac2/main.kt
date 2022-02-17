@@ -7,11 +7,28 @@ class Rgb {
     var r_ratio: Double = 0.0
     var g_ratio: Double = 0.0
     var b_ratio: Double = 0.0
+    var hex: String = "#000000"
 
     constructor ()
 
-    constructor (_hexCode: String) {
-
+    /**
+     * put `#RrGgBb here
+     *
+     * to construct an Rgb instance
+     */
+    constructor (_hexColorCode: String) {
+        val hexColorCode = _hexColorCode.slice(1.._hexColorCode.length-1)
+        var decColorCodeInt = hexColorCode.toInt(16)
+        hex = hexColorCode
+        b = decColorCodeInt % 256
+        decColorCodeInt /= 256
+        g = decColorCodeInt % 256
+        decColorCodeInt /= 256
+        r = decColorCodeInt % 256
+        decColorCodeInt /= 256
+        r_ratio = r.toDouble() / maxInteger
+        g_ratio = g.toDouble() / maxInteger
+        b_ratio = b.toDouble() / maxInteger
     }
 
     /**
@@ -91,6 +108,27 @@ class Rgb {
     }
 
     /**
+     * "`#RrGgBb`"
+     *
+     * represents in hexadecimal color code
+     *
+     *
+     */
+    fun toHexString(UPPERCASE_MODE: Boolean = true): String {
+        return if (UPPERCASE_MODE)
+            "#" +
+            "%02X".format(r) +
+            "%02X".format(g) +
+            "%02X".format(b)
+        else
+            "#" +
+            "%02x".format(r) +
+            "%02x".format(g) +
+            "%02x".format(b)
+
+    }
+
+    /**
      * "`Rgb(r_ratio, g_ratio, b_ratio)`"
      *
      * represents in three double-precision ratios
@@ -100,21 +138,20 @@ class Rgb {
     fun toRatioString(n: Int = 4, PERCENTAGE_MODE: Boolean = false): String {
         return if (!PERCENTAGE_MODE)
             "Rgb(" +
-            "${r_ratio.toBigDecimal()
-                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString()}, " +
-            "${g_ratio.toBigDecimal()
-                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString()}, " +
-            "${b_ratio.toBigDecimal()
-                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString()})"
+            r_ratio.toBigDecimal()
+                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString() + ", " +
+            g_ratio.toBigDecimal()
+                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString() + ", " +
+            b_ratio.toBigDecimal()
+                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString() + ")"
         else
             "Rgb(" +
-            "${(r_ratio.toBigDecimal() * BigDecimal(100))
-                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString()}%, " +
-            "${(g_ratio.toBigDecimal() * BigDecimal(100))
-                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString()}%, " +
-            "${(b_ratio.toBigDecimal() * BigDecimal(100))
-                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString()}%" +
-            ")"
+            (r_ratio.toBigDecimal() * BigDecimal(100))
+                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString() + "%, " +
+            (g_ratio.toBigDecimal() * BigDecimal(100))
+                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString() + "%, " +
+            (b_ratio.toBigDecimal() * BigDecimal(100))
+                .setScale(n, BigDecimal.ROUND_DOWN).toPlainString() + "%)"
 
     }
 
@@ -205,13 +242,4 @@ fun main() {
     val a = Rgb(R,G,B)
     val b = Rgb()
     println(a)
-    println(a.toDecString())
-    println(a.toRatioString(0))
-    println(a.toRatioString(4))
-    println(a.toRatioString(5,true))
-    println(a==b)
-    println(b)
-    println(b.toDecString())
-    println(b.toRatioString(0))
-    println(b.toRatioString(8, true))
 }
