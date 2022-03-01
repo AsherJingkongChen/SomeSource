@@ -1,19 +1,20 @@
 class BrickList {
     /* property */
     val list: HashSet<Int> = hashSetOf() // ordered
-    var count = 1
+    var count = 0
 
     /* method */
-    
-    fun push (): Int {
+
+    fun push (): String {
         /* dequeue then return head or count */
         val it = list.iterator()
         if (it.hasNext()) {
             val head = it.next()
             list.remove(head)
-            return head
+            return head.toString()
         } else {
-            return count++
+            count += 1
+            return count.toString()
         }
     }
 
