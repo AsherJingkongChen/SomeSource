@@ -3,4 +3,4 @@
 
 `Triviality ._.`
 
-[__Discord Ciis.#0840__]()
+[__Personal Discord Ciis.#0840__]()
