@@ -47,6 +47,6 @@ Each thread has its own task queue
 
 [並行程式設計 Lock-Free Programming](https://hackmd.io/@sysprog/concurrency-lockfree)
 
-[亘井 Github Lock-Free Thread Pool](https://github.com/xhjcehust/LFTPool)
+[亘井 Github  Lock-Free Thread Pool](https://github.com/xhjcehust/LFTPool)
 
 [kfifo - 海楓 csdn blog](https://blog.csdn.net/linyt/article/details/53355355)
