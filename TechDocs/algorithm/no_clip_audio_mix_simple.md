@@ -6,12 +6,14 @@ origin author: Micheal Tyson
 
 ## en-US highlights
 
-#### 1.Idea
+#### 1.Objective
 
 digital mixing actually requires a little thought in order to avoid overflowing these bounds and clipping.
 
+(PCM signed int 16-bits)
+
 #
-#### 2.Objective
+#### 2.Method
 
 - If both samples are positive,
 
@@ -50,7 +52,7 @@ inline SInt16 TPMixSamples(SInt16 a, SInt16 b) {
 }
 
 /* my edited pure code, C/C++ */
-inline int16_t NoClipAudioMix_I16(int16_t this_, int16_t other_) {
+inline int16_t NoClipAudioMixTwoSample_I16(int16_t this_, int16_t other_) {
     return
         (this_ < 0 && other_ < 0) ?
             ((int32_t)this_ + (int32_t)other_) - (((int32_t)this_ * (int32_t)other_) / INT16_MIN) :
@@ -63,3 +65,25 @@ inline int16_t NoClipAudioMix_I16(int16_t this_, int16_t other_) {
 ```
 
 ## zh-TW 摘要
+
+#### 1.目標
+
+PCM音訊混音或是多音軌播放, 把兩個數字加在一起, 但是要迴避 __溢出 (overflow)__
+
+#
+#### 2.方法
+
+兩樣本都正的，相加減一減很大的數字
+
+兩個都負的，相加加一加很大的數字
+
+一正一負，不會溢出
+
+#
+#### 3.實做
+
+其實code貼過去就好了
+
+`inline` 內聯函數, 展開三種決定, 轉大避免溢出, 再轉回來 __(signed int 16-bits [-2^16, 2^16-1])__
+
+其實這算法很老了._.
