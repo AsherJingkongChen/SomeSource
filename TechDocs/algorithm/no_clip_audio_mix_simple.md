@@ -6,7 +6,6 @@ origin author: Micheal Tyson
 
 ## en-US highlights
 
-#
 #### 1.Idea
 
 digital mixing actually requires a little thought in order to avoid overflowing these bounds and clipping.
