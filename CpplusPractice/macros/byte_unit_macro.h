@@ -1,6 +1,5 @@
-#ifdef BYTE
-#undef BYTE
-#endif //BYTE
+#ifdef BYTE_UNIT
+#define BYTE_UNIT
 
 #define BYTE *1UL
 #define KB *1024UL BYTE
@@ -18,3 +17,5 @@ int main() {
     return 0;
 }
 //*/
+
+#endif //BYTE_UNIT
