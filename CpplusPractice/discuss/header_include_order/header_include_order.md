@@ -15,11 +15,11 @@ The compilation fails when __including `export_n.h` instead of__ __`export_y.h (
 
 and they are different only at the order of including components (`water.h` and `cup.h`).
 
-Scroll down the content of 5 headers and 1 implmentation:
-
 I use one command to compile:
 
 `g++ -o test test.cpp`
+
+Scroll down the content of 5 headers and 1 implmentation:
 
 __define.h__
 
