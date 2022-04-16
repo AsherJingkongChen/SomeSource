@@ -105,8 +105,10 @@ __export_n.h__
 __test.cpp__
 
 ```h
+#if 1
 #include "export_y.h"
-//#include "export_n.h
+#else
+#include "export_n.h
 #include <iostream>
 
 int main()
