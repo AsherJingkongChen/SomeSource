@@ -11,7 +11,7 @@ Now, we have some header files under a directory [__`dir002`__](https://github.c
   - export_n.h
   - test.cpp
 ```
-The compilation fails when including `export_n.h` instead of `export_y.h (successful)`,
+The compilation fails when __including `export_n.h` instead of__ __`export_y.h (successful)`__,
 
 and they are different only at the order of including components (`water.h` and `cup.h`).
 
