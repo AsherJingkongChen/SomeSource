@@ -11,7 +11,7 @@ Now, we have some header files under a directory `dir002`:
   - export_n.h
   - test.cpp
 ```
-The compilation fails when including `export_n.h` instead of `export_y.h`,
+The compilation fails when including `export_n.h` instead of `export_y.h (successful)`,
 
 and they are different only at the order of including components (`water.h` and `cup.h`).
 
