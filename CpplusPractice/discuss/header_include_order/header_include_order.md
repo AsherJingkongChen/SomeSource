@@ -1,6 +1,6 @@
 ### Does the order of including header file matter?
 
-Now, we have some header files under a directory `dir002`:
+Now, we have some header files under a directory [__`dir002`__](https://github.com/AsherJingkongChen/PurBrainSource/tree/main/CpplusPractice/discuss/header_include_order/dir002):
 
 ```
 - dir002
