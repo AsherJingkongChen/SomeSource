@@ -25,15 +25,15 @@
 
 ### Usage
 
-IF AND ONLY IF DEFINED `DEBUG_MODE` TO 1:
+If and only if `DEBUG_MODE` defined as 0:
 
 ```h
-taglog("my_class::ctor ()\n");
-classlog("this", (*this));
+// literal nothing
 ```
 
 OTHERWISE:
 
 ```h
-// literal nothing
+taglog("my_class::ctor ()\n");
+classlog("this", (*this));
 ```
