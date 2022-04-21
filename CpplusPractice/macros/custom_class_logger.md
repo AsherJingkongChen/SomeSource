@@ -31,7 +31,7 @@ If and only if `DEBUG_MODE` defined as 0:
 // literal nothing
 ```
 
-otherwise (1, -1, any integer):
+otherwise (1, -1, or any integer):
 
 ```h
 taglog("my_class::ctor ()\n");
