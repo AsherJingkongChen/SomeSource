@@ -1,10 +1,10 @@
-### Copy the block to your headers
+### Copy the block to your headers (.CPP)
 
 ```h
 #undef DEBUG_MODE
 #define DEBUG_MODE 1
 #if DEBUG_MODE
-    #include <stdio.h>
+    #include <iostream>
 
     #define taglog(s) \
         printf(s)
