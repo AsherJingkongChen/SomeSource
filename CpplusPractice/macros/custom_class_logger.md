@@ -10,7 +10,7 @@
         printf(s)
     #define classlog(objname, ins) \
         printf("[%s]\n{\n     this @ 0x%08X\n  .buffer @ 0x%08X\n  .length = %u\n}\n" \
-        , objname, (uint32_t)(uint64_t)(&ins), (uint32_t)(uint64_t)ins.buffer, ins.length)
+        , objname, (uint32_t)(uint64_t)(&ins), (uint32_t)(uint64_t)(ins).buffer, (ins).length)
     #define mark_(s) \
         printf("-----u  %s  u-----\n", s)
     #define _mark(s) \
@@ -23,7 +23,7 @@
 #endif
 ```
 
-### Usage
+### Usage (In class methods)
 
 If and only if `DEBUG_MODE` defined as 0:
 
@@ -35,5 +35,5 @@ otherwise (1, -1, or any integer):
 
 ```h
 taglog("my_class::ctor ()\n");
-classlog("this", (*this));
+classlog("this", *this);
 ```
