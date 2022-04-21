@@ -4,7 +4,7 @@
 #undef DEBUG_MODE
 #define DEBUG_MODE 1
 #if DEBUG_MODE
-    #include <iostream>
+    #include <stdio.h>
 
     #define taglog(s) \
         printf(s)
