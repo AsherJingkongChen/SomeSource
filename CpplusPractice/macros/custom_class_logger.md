@@ -23,7 +23,7 @@
 #endif
 ```
 
-### Usage (In class methods)
+### Usage in class methods
 
 If and only if `DEBUG_MODE` defined as 0:
 
