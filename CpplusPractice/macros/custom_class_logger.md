@@ -22,3 +22,18 @@
     #define _mark(s)        (void)0
 #endif
 ```
+
+### Usage
+
+IF AND ONLY IF DEFINED `DEBUG_MODE` TO 1:
+
+```h
+taglog("my_class::ctor ()\n");
+classlog("this", (*this));
+```
+
+OTHERWISE:
+
+```h
+// literal nothing
+```
