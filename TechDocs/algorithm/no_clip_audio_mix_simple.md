@@ -1,4 +1,4 @@
-## No-Clip Audio mix algorithm (Simple, Swift/C/C++ way)
+## [DEPRECATED] No-Clip Audio mix algorithm (Simple, Swift/C/C++ way)
 
 [origin article](https://atastypixel.com/how-to-mix-audio-samples-properly-on-ios/)
 
