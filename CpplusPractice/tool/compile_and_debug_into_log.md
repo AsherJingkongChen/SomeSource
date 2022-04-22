@@ -2,13 +2,9 @@
 
 compile (-g debug, -W warnings)
 
--> debug
+-> debug (--leak-check=full leaksum, --track-origins=yes tracker)
 
--> debug log + runtime log (temp)
-
--> concate 2 logs
-
--> remove runtime log (temp)
+-> stderr redirect to stdout
 
 __And you get `log-test.log`__
 
