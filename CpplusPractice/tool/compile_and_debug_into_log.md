@@ -1,16 +1,16 @@
 ### One Unix command (gcc, valgrind)
 
-__compile__ (-g debug, -W warnings)
+compile (-g debug, -W warnings)
 
-__-> debug__
+-> debug
 
-__-> debug log + runtime log (temp)__
+-> debug log + runtime log (temp)
 
-__-> concate 2 logs__
+-> concate 2 logs
 
-__-> remove runtime log (temp)__
+-> remove runtime log (temp)
 
-#### And You get log-test.log
+__And you get `log-test.log`__
 
 ```bash
 g++ -std=c++17 -g -W test.cpp -o test && \
