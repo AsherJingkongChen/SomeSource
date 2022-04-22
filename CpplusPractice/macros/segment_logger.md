@@ -32,17 +32,17 @@ __`mark_`__ and __`_mark`__ highlight the __specific__ segment `mark_("test"); .
 #### example1:
 
 ```h
-/* ctor0 */
 class my_class {
     void*   my_pointer;
     int     my_number;
     
 public:
+/* ctor0 */
     my_class()
     : my_pointer(nullptr)
     , my_number(0)
     {   
-        taglog("byte_frame::ctor0  ()\n");
+        taglog("my_class::ctor0  ()\n");
     }
 };
 ```
