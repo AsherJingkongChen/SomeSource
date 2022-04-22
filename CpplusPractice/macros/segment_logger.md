@@ -22,11 +22,11 @@
 #endif
 ```
 
-`LN` is the Line Number (static counter to taglog)
+__`LN`__ is the Line Number (static __counter__ to taglog)
 
-`taglog` is an optional printer: `taglog("just like printf(...), right? %s", "Yes!");`
+__`taglog`__ is an optional __printer__: `taglog("just like printf(...), right? %s", "Yes!");`
 
-`mark_ and _mark` highlight the specific segment `mark_("test"); ... _mark("test");`
+__`mark_`__ and __`_mark`__ highlight the __specific__ segment `mark_("test"); ... _mark("test");`
 
 #### example:
 
