@@ -1,5 +1,5 @@
 # Poor Brain Source
-### poor source here, not only codes
+### pur source here, not only codes, but verbose
 
 `Triviality ._.`
 
