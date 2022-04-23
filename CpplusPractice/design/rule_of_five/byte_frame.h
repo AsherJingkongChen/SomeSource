@@ -1,5 +1,5 @@
 /**
- * Cplusplus class rule of "2 + basic 6 + custom"
+ * Ciis' Cplusplus class rule of "2 + basic 6 + custom"
  * _1. private members
  * _2. public members + get + set
  * b1. destructor
