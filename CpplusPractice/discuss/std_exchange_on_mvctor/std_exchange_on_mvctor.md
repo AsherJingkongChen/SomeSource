@@ -23,7 +23,7 @@ This custom class has __a member `length`__, and this section as below is for __
 __`length(_src.length)`__
 
 ```assembly
-; /Users/yilan/Desktop/frame/./byte_frame.h:102
+; /Users/name/Desktop/frame/./byte_frame.h:102
 ;         , length(_src.length)
      cd8: 48 8b 55 f0                  	movq	-16(%rbp), %rdx
      cdc: 8b 72 08                     	movl	8(%rdx), %esi
@@ -34,7 +34,7 @@ __`length(_src.length)`__
 __`length(std::exchange(_src.length, 0))`__
 
 ```assembly
-; /Users/yilan/Desktop/frame/./byte_frame.h:102
+; /Users/name/Desktop/frame/./byte_frame.h:102
 ;         , length(std::exchange(_src.length, 0))
      cdc: 48 83 c2 08                  	addq	$8, %rdx
      ce0: 48 8b 75 f0                  	movq	-16(%rbp), %rsi
