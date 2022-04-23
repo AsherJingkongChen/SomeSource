@@ -1,8 +1,8 @@
 ## Issue on move constructors and std::exchange
 
-Why does __this example__ from en.cppreference.com use std::exchange on nonclass-type?
+Why do __these example__ use std::exchange on nonclass-type?
 
-[the example (cppreference)](https://en.cppreference.com/w/cpp/language/move_constructor)
+[the first example (cppreference)](https://en.cppreference.com/w/cpp/language/move_constructor)
 
 [std::exchange (cppreference)](https://en.cppreference.com/w/cpp/utility/exchange)
 
