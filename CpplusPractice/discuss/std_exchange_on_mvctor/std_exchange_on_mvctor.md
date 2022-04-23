@@ -1,4 +1,4 @@
-## Issue on move constructors and std::exchange
+## Questions on move constructors and std::exchange
 
 Why do __these example__ use std::exchange on nonclass-type?
 
