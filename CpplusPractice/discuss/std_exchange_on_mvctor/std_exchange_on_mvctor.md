@@ -8,6 +8,10 @@ Why does __this example__ from en.cppreference.com use std::exchange on nonclass
 
 ![](iss_semc1.png)
 
+[another similar example (microsoft docs)](https://docs.microsoft.com/en-us/cpp/cpp/move-constructors-and-move-assignment-operators-cpp?view=msvc-170)
+
+![](iss_semc2.png)
+
 In my opinion, it's enough safe for initializing members in primitive type (nonclass-type).
 
 But, I don't understand why this example use a bit expensive __`exchange`__ operations.
