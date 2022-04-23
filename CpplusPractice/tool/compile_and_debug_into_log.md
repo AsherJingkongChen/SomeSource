@@ -23,7 +23,7 @@ __Complete version__
 ```bash
 export CPP_SRC_CODE=test && \
 g++ -std=c++17 -g -c -W ${CPP_SRC_CODE}.cpp -o ${CPP_SRC_CODE}.o && \
-g++ -std=c++17 -g  -W ${CPP_SRC_CODE}.cpp -o ${CPP_SRC_CODE} && \
+g++ -std=c++17 -g -W ${CPP_SRC_CODE}.cpp -o ${CPP_SRC_CODE} && \
 valgrind \
 --leak-check=full \
 --track-origins=yes \
