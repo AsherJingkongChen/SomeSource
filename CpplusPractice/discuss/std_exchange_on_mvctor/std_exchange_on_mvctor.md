@@ -22,7 +22,7 @@ or set __nonclass-typed__ members to 0.
 
 Is it because they want to set __the value to 0__? (we should do that for __pointers__ indeed, preventing doubly-free's)
 
-__My own tests as following shows:__
+__My own tests as following show:__
 
 (Outputs printed using `objdump -C -D -S -l test.o > log_.log`)
 
