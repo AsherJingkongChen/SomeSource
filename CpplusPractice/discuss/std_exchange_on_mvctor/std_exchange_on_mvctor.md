@@ -1,6 +1,6 @@
-## Questions on move constructors and std::exchange
+## Questions on move constructors and exchange operations
 
-Why do __these example__ use std::exchange on nonclass-type?
+Why do __these example__ use exchange operations on nonclass-typed members?
 
 [the first example (cppreference)](https://en.cppreference.com/w/cpp/language/move_constructor)
 
@@ -12,9 +12,13 @@ Why do __these example__ use std::exchange on nonclass-type?
 
 ![](iss_semc2.png)
 
-In my opinion, it's enough safe for initializing members in primitive type (nonclass-type).
+In my opinion, 
 
-But, I don't understand why this example use a bit expensive __`exchange`__ operations.
+directly assignment is enough safe for initializing members in __primitive types (nonclass-type)__.
+
+But, I don't understand why do some examples use a little bit expensive __`exchange`__ operations,
+
+or set __nonclass-typed__ members to 0.
 
 Is it because they want to set __the value to 0__? (we should do that for __pointers__ indeed, preventing doubly-free's)
 
@@ -57,4 +61,4 @@ __`length(std::exchange(_src.length, 0))`__
      d16: 89 08                        	movl	%ecx, (%rax)
 ```
 #
-#### 註腳: 為什麼這個範例在移動建構式要用std::exchange, 直接賦值又如何?
+#### 註腳: 為什麼這個範例在移動建構式要用std::exchange或是歸零, 只做賦值又如何?
