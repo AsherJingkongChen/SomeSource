@@ -30,5 +30,5 @@ valgrind \
 ./${CPP_SRC_CODE} > log_${CPP_SRC_CODE}.log \
 2>&1 && \
 cat ${CPP_SRC_CODE}.cpp >> log_${CPP_SRC_CODE}.log && \
-objdump -C -D -S ${CPP_SRC_CODE}.o > log_asm.log
+objdump -C -D -S -l ${CPP_SRC_CODE}.o > log_asm.log
 ```
