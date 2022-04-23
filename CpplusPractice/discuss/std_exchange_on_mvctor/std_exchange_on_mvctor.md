@@ -60,5 +60,8 @@ __`length(std::exchange(_src.length, 0))`__
      d13: 8b 4d b4                     	movl	-76(%rbp), %ecx
      d16: 89 08                        	movl	%ecx, (%rax)
 ```
+
+... Of course the simplest assignment is super fast!
+
 #
 #### 註腳: 為什麼這個範例在移動建構式要用std::exchange或是歸零, 只做賦值又如何?
