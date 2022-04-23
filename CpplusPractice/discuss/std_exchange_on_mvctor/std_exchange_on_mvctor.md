@@ -63,5 +63,7 @@ __`length(std::exchange(_src.length, 0))`__
 
 ... Of course the simplest assignment is super fast!
 
+And, it should be sufficiently safe.
+
 #
 #### 註腳: 為什麼這個範例在移動建構式要用std::exchange或是歸零, 只做賦值又如何?
