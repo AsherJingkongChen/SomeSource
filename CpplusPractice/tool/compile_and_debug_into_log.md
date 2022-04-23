@@ -14,5 +14,6 @@ valgrind \
 --leak-check=full \
 --track-origins=yes \
 ./test > log_test.log \
-2>&1
+2>&1 && \
+cat test.cpp >> log_test.log
 ```
