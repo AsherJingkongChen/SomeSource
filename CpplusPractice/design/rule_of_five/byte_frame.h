@@ -1,3 +1,16 @@
+/**
+ * Cplusplus class rule of "2 + basic 6 + custom"
+ * _1. private members
+ * _2. public members + get + set
+ * b1. destructor
+ * b2. constructors 
+ * b3. copy constructor
+ * b4. move constructor
+ * b5. copy assignment operator
+ * b6. move assignment operator
+ * _3. custom methods
+ */
+
 #ifndef CIIS_BYTE_FRAME_H
 #define CIIS_BYTE_FRAME_H
 
@@ -7,6 +20,10 @@
 #include <algorithm>
 #include <utility>
 #include <type_traits>
+
+/**
+ * debug tools
+ */
 
 #undef DEBUG_MODE
 #define DEBUG_MODE 1
