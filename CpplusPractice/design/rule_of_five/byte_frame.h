@@ -1,16 +1,3 @@
-/**
- * Ciis' Cplusplus class rule of "2 + basic 6 + custom"
- * _1. private members
- * _2. public members + get + set
- * b1. destructor
- * b2. constructors 
- * b3. copy constructor
- * b4. move constructor
- * b5. copy assignment operator
- * b6. move assignment operator
- * _3. custom methods
- */
-
 #ifndef CIIS_BYTE_FRAME_H
 #define CIIS_BYTE_FRAME_H
 
@@ -20,10 +7,6 @@
 #include <algorithm>
 #include <utility>
 #include <type_traits>
-
-/**
- * debug tools
- */
 
 #undef DEBUG_MODE
 #define DEBUG_MODE 1
@@ -87,7 +70,7 @@ public:
         taglog("byte_frame::ctor0  ()\n");
     }
 
-/* ctorA */
+/* ctorA (alloc) */
     explicit
     byte_frame(uint32_t _length)
         : buffer(new TYPE[_length]())
@@ -122,29 +105,32 @@ public:
     }
 
 /* copy assign */
-    byte_frame&
+    void
     operator=(const byte_frame& _rhs)
     {
-        *this = byte_frame(_rhs); // cpctor + move=
+        if (length == _rhs.length) 
+        {
+            *this << _rhs.buffer; // copy
+        } 
+        else
+        {
+            *this = byte_frame(_rhs); // cpctor + move=
+        }
 
         taglog("byte_frame::copy=  (const byte_frame& _rhs)\n");
-
-        return *this;
     }
 
 /* move assign */
-    byte_frame&
+    void
     operator=(byte_frame&& _rhs) noexcept
     {
         std::swap(buffer, _rhs.buffer);
         length = _rhs.length;
 
         taglog("byte_frame::move=  (byte_frame&& _rhs)\n");
-        
-        return *this;
     }
 
-// byte_frame method section :
+// custom method section :
 
 /* assert equivalence of member values (no logging) */
     bool
@@ -184,24 +170,24 @@ public:
         taglog("byte_frame::oper>> (TYPE* _des)\n");
     }
 
-/* copy */
+/* copy (safe) */
     void
     operator<<(const byte_frame& _src)
     {
         if (length != _src.length) return;
 
-        std::copy(_src.buffer, _src.buffer + _src.length, buffer);
+        *this << _src.buffer;
 
         taglog("byte_frame::oper<< (const byte_frame& _src)\n");
     }
 
-/* paste */
+/* paste (safe) */
     void
     operator>>(const byte_frame& _des)
     {
         if (length != _des.length) return;
 
-        std::copy(buffer, buffer + length, _des.buffer);
+        *this >> _des.buffer;
 
         taglog("byte_frame::oper>> (const byte_frame& _des)\n");
     }
