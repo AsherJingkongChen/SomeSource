@@ -98,9 +98,12 @@ public:
 
 /* move ctor */
     byte_frame(byte_frame&& _src) noexcept
-        : buffer(std::exchange(_src.buffer, nullptr))
+        : buffer(_src.buffer)
         , length(_src.length)
     {
+        _src.buffer = 0;
+        _src.length = 0;
+
         taglog("byte_frame::mvctor (byte_frame&& _src)\n");
     }
 
@@ -125,7 +128,7 @@ public:
     operator=(byte_frame&& _rhs) noexcept
     {
         std::swap(buffer, _rhs.buffer);
-        length = _rhs.length;
+        length = _rhs.length; _rhs.length = 0;
 
         taglog("byte_frame::move=  (byte_frame&& _rhs)\n");
     }
