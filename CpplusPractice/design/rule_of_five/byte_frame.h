@@ -36,7 +36,7 @@ template <class TYPE>
 class byte_frame {
 
 static_assert(std::is_fundamental<TYPE>::value
-, "byte_frame<TYPE>, TYPE limits for primitive type only");
+, "byte_frame<TYPE>, TYPE is limited for primitive type only");
 
 private:
     TYPE*       buffer;
