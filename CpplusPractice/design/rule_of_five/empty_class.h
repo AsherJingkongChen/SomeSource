@@ -54,11 +54,11 @@ public:
     empty_class(empty_class&& _src) noexcept {};
   
 /* copy = */
-    empty_class&
+    void
     operator=(const empty_class& _rhs)       {};
   
 /* move = */
-    empty_class&
+    void
     operator=(empty_class&& _rhs)   noexcept {};
   
 // custom method section :
