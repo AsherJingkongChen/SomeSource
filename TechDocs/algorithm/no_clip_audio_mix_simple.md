@@ -87,3 +87,6 @@ PCM音訊混音或是多音軌播放, 把兩個數字加在一起, 但是要迴�
 `inline` 內聯函數, 傳入兩個short, 展開三種決定, 轉大避免溢出, 再轉回來 __(signed int 16-bits [-1<<16, 1<<16-1])__
 
 其實這算法很老了._.
+
+#
+#### 註解: 請改用歸一化混音 (Use normalization mixing instead)
