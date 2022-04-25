@@ -1,9 +1,21 @@
 /**
  * task_queue
  * 
- * A C++ Version of lock-free ring buffer (SPSC only)
- * Atomic implementation
- * Extremely simple to use
+ * A C++ Version of lock-free ring buffer
+ *
+ * (Usage on SPSC case guarantees lock-free)
+ *
+ * Atomic implementation (cache miss?)  [v]
+ * Use only C++STL                      [v]
+ * No mutex, sync-locks, busy loop      [v]
+ * Zero if-else usage                   [v]
+ * Auto fit size to power of Two        [v]
+ * Safe lock for over-access            [v]
+ * Self-documenting & Nice naming       [v]
+ * Comfortable indentation              [v]
+ * Brief comments                       [v]
+ * 
+ * "Simple to use"
  * (However, you need to manage your custom objects on your own.)
  * 
  * - Single Constructor (rule of zero)
@@ -115,7 +127,7 @@ public:
         uint32_t IN     = in.load(std::memory_order_relaxed);
         uint32_t OUT    = out.load(std::memory_order_acquire);
 
-        ringbuf[index(IN, cap)] = input;
+        ringbuf[index(IN, cap)] = input; // TODO: may use copy/move assignment, c++17 (copy-elision)
 
         in.store(IN+1, std::memory_order_release);
     }
@@ -128,7 +140,7 @@ public:
         uint32_t IN     = in.load(std::memory_order_acquire);
         uint32_t OUT    = out.load(std::memory_order_relaxed);
 
-        TYPE output = ringbuf[index(OUT, cap)];
+        TYPE output = ringbuf[index(OUT, cap)]; // TODO: may use copy/move assignment, c++17 (copy-elision)
 
         out.store(OUT+1, std::memory_order_release);
 
