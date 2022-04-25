@@ -1,6 +1,13 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
+/**
+ * int (pointed type)
+ * int* (pointer_1) (pointer to int)
+ * int** (pointer_2) (pointer to pointer)
+ */
+
+
+#include <stdio.h>  // printf
+#include <stdint.h> // uintxx_t
+#include <stdlib.h> // malloc
 
 int main() 
 {
