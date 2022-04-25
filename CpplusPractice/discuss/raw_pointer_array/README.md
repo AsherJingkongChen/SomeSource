@@ -1,4 +1,4 @@
-```assembly
+```rust
 ==37102== Memcheck, a memory error detector
 ==37102== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
 ==37102== Using Valgrind-3.19.0.GIT-lbmacos and LibVEX; rerun with -h for copyright info
