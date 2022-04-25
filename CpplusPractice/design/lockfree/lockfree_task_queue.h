@@ -19,8 +19,13 @@
  * (However, you need to manage your custom objects on your own.)
  * 
  * - Single Constructor (rule of zero)
- * - void enqueue(TYPE)
- * - TYPE dequeue()
+ *
+ * - void enqueue(const TYPE &), void enqueue(TYPE &&)
+ *     => copy/move assignment
+ *
+ * - TYPE dequeue(), void dequeue(TYPE &)
+ *     => copy/move assignment
+ *
  * - that's all!
  *
  * "Code in C++"
