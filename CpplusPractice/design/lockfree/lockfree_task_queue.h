@@ -46,6 +46,7 @@ private:
     static inline uint32_t
     fit(uint32_t c)
     {
+        c--;
         c |= c >> 1;
         c |= c >> 2;
         c |= c >> 4;
@@ -119,38 +120,64 @@ public:
         ringbuf = new TYPE[cap];
     }
 
-/* enqueue, push, or write (copy/move assignment) */
+/* enqueue, push, or write (copy assignment) */
     void
-    enqueue(TYPE input, bool use_move = false)
+    enqueue(const TYPE& input)
     {
         req_enq();
 
         uint32_t IN     = in.load(std::memory_order_relaxed);
         uint32_t OUT    = out.load(std::memory_order_acquire);
 
-        if (use_move)   ringbuf[index(IN, cap)] = std::move(input);
-        else            ringbuf[index(IN, cap)] = input;
+        ringbuf[index(IN, cap)] = input;
 
         in.store(IN+1, std::memory_order_release);
     }
 
-/* dequeue, pop, or read (copy/move assignment) */
+/* enqueue, push, or write (move assignment) */
+    void
+    enqueue(TYPE&& input)
+    {
+        req_enq();
+
+        uint32_t IN     = in.load(std::memory_order_relaxed);
+        uint32_t OUT    = out.load(std::memory_order_acquire);
+
+        ringbuf[index(IN, cap)] = std::move(input);
+
+        in.store(IN+1, std::memory_order_release);
+    }
+
+/* dequeue, pop, or read (copy assignment) */
     TYPE
-    dequeue(bool use_move = false)
+    dequeue()
     {
         req_deq();
 
         uint32_t IN     = in.load(std::memory_order_acquire);
         uint32_t OUT    = out.load(std::memory_order_relaxed);
 
-        TYPE output;
-        if (use_move)   output = std::move(ringbuf[index(OUT, cap)]);
-        else            output = ringbuf[index(OUT, cap)];
+        TYPE output = ringbuf[index(OUT, cap)];
 
         out.store(OUT+1, std::memory_order_release);
 
         return output;
     }
+    
+/* dequeue, pop, or read (move assignment) */
+    void
+    dequeue(TYPE& output)
+    {
+        req_deq();
+
+        uint32_t IN     = in.load(std::memory_order_acquire);
+        uint32_t OUT    = out.load(std::memory_order_relaxed);
+
+        output = std::move(ringbuf[index(OUT, cap)]);
+
+        out.store(OUT+1, std::memory_order_release);
+    }
+
 };
 
 #endif //CIIS_LOCKFREE_TASK_QUEUE_H
