@@ -1,7 +1,16 @@
 /**
- * C++ Version of lock-free ring buffer (SPSC only)
+ * task_queue
+ * 
+ * A C++ Version of lock-free ring buffer (SPSC only)
  * Atomic implementation
  * Extremely simple to use
+ * (However, you need to manage your custom objects on your own.)
+ * 
+ * - Single Constructor (rule of zero)
+ * - void enqueue(TYPE)
+ * - TYPE dequeue()
+ * - that's all!
+ *
  * "Code in C++"
  */
 
