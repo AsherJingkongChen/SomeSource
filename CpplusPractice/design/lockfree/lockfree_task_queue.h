@@ -32,6 +32,7 @@
 #include <atomic>
 #include <cstdint>
 #include <thread>
+#include <utility>
 
 template<class TYPE>
 class task_queue {
