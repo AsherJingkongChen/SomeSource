@@ -54,6 +54,7 @@ public:
     {
         delete[] buffer;
         buffer = nullptr;
+
         length = 0;
 
         taglog("byte_frame::destor ()\n");
@@ -70,10 +71,10 @@ public:
 /* ctorA (alloc) */
     explicit
     byte_frame(uint32_t _length)
-        : buffer(new TYPE[_length]())
+        : buffer(new TYPE[_length]{})
         , length(_length)
     {
-        taglog("byte_frame::ctorA  (_length)\n");
+        taglog("<ALOC> byte_frame::ctorA  (_length)\n");
     }
 
 /* ctorC (unsafe, range issue) */
@@ -83,14 +84,14 @@ public:
     {
         std::copy(_buffer, _buffer + _length, buffer);
 
-        taglog("byte_frame::ctorC  (_buffer, _length)\n");
+        taglog("<COPY> byte_frame::ctorC  (_buffer, _length)\n");
     }
 
 /* copy ctor */
     byte_frame(const byte_frame& _src)
         : byte_frame(_src.buffer, _src.length)
     {
-        taglog("byte_frame::cpctor (const byte_frame& _src)\n");
+        taglog("<COPY> byte_frame::cpctor (const byte_frame& _src)\n");
     }
 
 /* move ctor */
@@ -98,10 +99,10 @@ public:
         : buffer(_src.buffer)
         , length(_src.length)
     {
-        _src.buffer = 0;
+        _src.buffer = nullptr;
         _src.length = 0;
 
-        taglog("byte_frame::mvctor (byte_frame&& _src)\n");
+        taglog("<MOVE> byte_frame::mvctor (byte_frame&& _src)\n");
     }
 
 /* copy assign */
@@ -117,7 +118,7 @@ public:
             *this = byte_frame(_rhs); // cpctor + move=
         }
 
-        taglog("byte_frame::copy=  (const byte_frame& _rhs)\n");
+        taglog("<COPY> byte_frame::copy=  (const byte_frame& _rhs)\n");
     }
 
 /* move assign */
@@ -125,9 +126,9 @@ public:
     operator=(byte_frame&& _rhs) noexcept
     {
         std::swap(buffer, _rhs.buffer);
-        length = _rhs.length; _rhs.length = 0;
+        std::swap(length, _rhs.length);
 
-        taglog("byte_frame::move=  (byte_frame&& _rhs)\n");
+        taglog("<MOVE> byte_frame::move=  (byte_frame&& _rhs)\n");
     }
 
 // custom method section :
@@ -158,7 +159,7 @@ public:
     {
         std::copy(_src, _src + length, buffer);
 
-        taglog("byte_frame::oper<< (TYPE* _src)\n");
+        taglog("<COPY> byte_frame::oper<< (TYPE* _src)\n");
     }
 
 /* paste (unsafe, range issues) */
@@ -167,7 +168,7 @@ public:
     {
         std::copy(buffer, buffer + length, _des);
 
-        taglog("byte_frame::oper>> (TYPE* _des)\n");
+        taglog("<COPY> byte_frame::oper>> (TYPE* _des)\n");
     }
 
 /* copy (safe) */
@@ -178,7 +179,7 @@ public:
 
         *this << _src.buffer;
 
-        taglog("byte_frame::oper<< (const byte_frame& _src)\n");
+        taglog("<COPY> byte_frame::oper<< (const byte_frame& _src)\n");
     }
 
 /* paste (safe) */
@@ -189,7 +190,7 @@ public:
 
         *this >> _des.buffer;
 
-        taglog("byte_frame::oper>> (const byte_frame& _des)\n");
+        taglog("<COPY> byte_frame::oper>> (const byte_frame& _des)\n");
     }
 
 };
