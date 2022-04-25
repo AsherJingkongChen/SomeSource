@@ -1,3 +1,4 @@
+### Result, no memory leaks (successful)
 ```rust
 ==37102== Memcheck, a memory error detector
 ==37102== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
