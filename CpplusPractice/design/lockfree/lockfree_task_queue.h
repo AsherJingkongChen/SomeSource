@@ -118,29 +118,33 @@ public:
         ringbuf = new TYPE[cap];
     }
 
-/* enqueue, push, or write (copy assignment) */
+/* enqueue, push, or write (copy/move assignment) */
     void
-    enqueue(TYPE input)
+    enqueue(TYPE input, bool use_move = false)
     {
         req_enq();
 
         uint32_t IN     = in.load(std::memory_order_relaxed);
         uint32_t OUT    = out.load(std::memory_order_acquire);
 
-        ringbuf[index(IN, cap)] = input; // TODO: may use copy/move assignment, c++17 (copy-elision)
+        if (use_move)   ringbuf[index(IN, cap)] = std::move(input);
+        else            ringbuf[index(IN, cap)] = input;
 
         in.store(IN+1, std::memory_order_release);
     }
 
+/* dequeue, pop, or read (copy/move assignment) */
     TYPE
-    dequeue()
+    dequeue(bool use_move = false)
     {
         req_deq();
 
         uint32_t IN     = in.load(std::memory_order_acquire);
         uint32_t OUT    = out.load(std::memory_order_relaxed);
 
-        TYPE output = ringbuf[index(OUT, cap)]; // TODO: may use copy/move assignment, c++17 (copy-elision)
+        TYPE output;
+        if (use_move)   output = std::move(ringbuf[index(OUT, cap)]);
+        else            output = ringbuf[index(OUT, cap)];
 
         out.store(OUT+1, std::memory_order_release);
 
