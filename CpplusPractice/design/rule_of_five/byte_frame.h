@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <type_traits>
 
-#undef DEBUG_MODE
+#ifndef DEBUG_MODE
 #define DEBUG_MODE 1
 #if DEBUG_MODE
     #include <stdio.h>
@@ -24,6 +24,7 @@
     #define mark_(s)            (void)0
     #define _mark(s)            (void)0
 #endif
+#endif
 
 /**
  * primitive type byte_frame
@@ -41,7 +42,7 @@ private:
 
 public:
 /* get & set */
-    uint32_t
+    inline uint32_t
     get_length() const
     {
         return length;
@@ -57,7 +58,7 @@ public:
 
         length = 0;
 
-        taglog("byte_frame::destor ()\n");
+        taglog("<DLOC> byte_frame::destor ()\n");
     }
 
 /* ctor0 */
@@ -65,19 +66,19 @@ public:
         : buffer(nullptr)
         , length(0)
     {   
-        taglog("byte_frame::ctor0  ()\n");
+        taglog("<DCLR> byte_frame::ctor0  ()\n");
     }
 
-/* ctorA (alloc) */
+/* ctorA */
     explicit
     byte_frame(uint32_t _length)
-        : buffer(new TYPE[_length]{})
+        : buffer(new TYPE[_length])
         , length(_length)
     {
         taglog("<ALOC> byte_frame::ctorA  (_length)\n");
     }
 
-/* ctorC (unsafe, range issue) */
+/* ctorC (copy from raw pointers) */
     explicit
     byte_frame(TYPE* _buffer, uint32_t _length) noexcept
         : byte_frame(_length)
@@ -88,6 +89,7 @@ public:
     }
 
 /* copy ctor */
+    explicit
     byte_frame(const byte_frame& _src)
         : byte_frame(_src.buffer, _src.length)
     {
@@ -95,6 +97,7 @@ public:
     }
 
 /* move ctor */
+    explicit
     byte_frame(byte_frame&& _src) noexcept
         : buffer(_src.buffer)
         , length(_src.length)
@@ -111,11 +114,11 @@ public:
     {
         if (length == _rhs.length) 
         {
-            *this << _rhs.buffer; // copy
+            std::copy(_rhs.buffer, _rhs.buffer + length, buffer);
         } 
-        else
+        else // if lengths are different, create new instance
         {
-            *this = byte_frame(_rhs); // cpctor + move=
+            *this = byte_frame(_rhs);
         }
 
         taglog("<COPY> byte_frame::copy=  (const byte_frame& _rhs)\n");
@@ -153,44 +156,40 @@ public:
         return !(*this == _rhs);
     }
 
-/* copy (unsafe, range issues) */
+/* paste (paste to raw pointers, assigned length) */
     void
-    operator<<(TYPE* _src) noexcept
+    paste(TYPE* _buffer, uint32_t _length) noexcept
     {
-        std::copy(_src, _src + length, buffer);
+        std::copy(buffer, buffer + _length, _buffer);
 
-        taglog("<COPY> byte_frame::oper<< (TYPE* _src)\n");
+        taglog("<COPY> byte_frame::paste  (TYPE* _buffer, uint32_t _length)\n");
     }
 
-/* paste (unsafe, range issues) */
+/* paste (paste to raw pointers, default length) */
     void
-    operator>>(TYPE* _des) noexcept
+    paste(TYPE* _buffer) noexcept
     {
-        std::copy(buffer, buffer + length, _des);
+        std::copy(buffer, buffer + length, _buffer);
 
-        taglog("<COPY> byte_frame::oper>> (TYPE* _des)\n");
+        taglog("<COPY> byte_frame::paste  (TYPE* _buffer)\n");
     }
 
-/* copy (safe) */
+/* copy (copy from raw pointers, assigned length) */
     void
-    operator<<(const byte_frame& _src)
+    copy(TYPE* _buffer, uint32_t _length) noexcept
     {
-        if (length != _src.length) return;
+        std::copy(_buffer, _buffer + _length, buffer);
 
-        *this << _src.buffer;
-
-        taglog("<COPY> byte_frame::oper<< (const byte_frame& _src)\n");
+        taglog("<COPY> byte_frame::copy   (TYPE* _buffer, uint32_t _length)\n");
     }
 
-/* paste (safe) */
+/* copy (copy from raw pointers, default length) */
     void
-    operator>>(const byte_frame& _des)
+    copy(TYPE* _buffer) noexcept
     {
-        if (length != _des.length) return;
+        std::copy(_buffer, _buffer + length, buffer);
 
-        *this >> _des.buffer;
-
-        taglog("<COPY> byte_frame::oper>> (const byte_frame& _des)\n");
+        taglog("<COPY> byte_frame::copy   (TYPE* _buffer)\n");
     }
 
 };
