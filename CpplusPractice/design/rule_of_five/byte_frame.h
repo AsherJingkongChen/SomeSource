@@ -1,19 +1,18 @@
-#ifndef CIIS_BYTE_FRAME_H
-#define CIIS_BYTE_FRAME_H
+#ifndef CIIS_BYTE_BUFFER_H
+#define CIIS_BYTE_BUFFER_H
 
 #include <cstdint>
 #include <algorithm>
-#include <type_traits>
 
 #ifndef DEBUG_MODE
 #define DEBUG_MODE 1
 #if DEBUG_MODE
     #include <stdio.h>
 
-    static uint16_t LN = 0;
+    static uint32_t LN = 0;
 
     #define taglog(...) \
-        printf("<L%5.1u-> | ", ++LN); \
+        printf("<L%6.1u-> | ", ++LN); \
         printf(__VA_ARGS__)
     #define mark_(s) \
         printf("u ----  %s  ---- u\n", s)
@@ -27,171 +26,146 @@
 #endif
 
 /**
- * primitive type byte_frame
+ * byte_buffer<TYPE>, an copy-and-paste buffer
+ * 
+ * :: TYPE*   frames      | array  of frames
+ * :: size_t  num_frames  | number of frames 
+ * 
+ * byte_buffer<TYPE>  -> TYPE frames[num_frames]
+ * 
+ * -- the contained data type should be either copyable --
  */
-
 template <class TYPE>
-class byte_frame {
-
-static_assert(std::is_fundamental<TYPE>::value
-, "byte_frame<TYPE>, TYPE is limited for primitive type only");
+class byte_buffer {
 
 private:
-    TYPE*       buffer;
-    uint32_t    length;
+    TYPE*   frames;
+    size_t  num_frames;
 
 public:
 /* get & set */
-    inline uint32_t
-    get_length() const
+    inline size_t
+    get_num_frames() const
     {
-        return length;
+        return num_frames;
     }
 
 // basic method section :
 
-/* dtor */
-    ~byte_frame()
+/* dtor (destructor) */
+    ~byte_buffer()
     {
-        delete[] buffer;
-        buffer = nullptr;
+        delete[] frames;
+        frames = nullptr;
 
-        length = 0;
+        num_frames = 0;
 
-        taglog("<DLOC> byte_frame::destor ()\n");
+        taglog("<DLOC> byte_buffer::destor ()\n");
     }
 
-/* ctor0 */
-    byte_frame()
-        : buffer(nullptr)
-        , length(0)
+/* ctor0 (default constructor) */
+    byte_buffer()
+        : frames(nullptr)
+        , num_frames(0)
     {   
-        taglog("<DCLR> byte_frame::ctor0  ()\n");
+        taglog("<DCLR> byte_buffer::ctor0  ()\n");
     }
 
-/* ctorA */
-    explicit
-    byte_frame(uint32_t _length)
-        : buffer(new TYPE[_length]{})
-        , length(_length)
+/* ctorA (allocation constructor) 
+   optionally copy content of raw pointers to `frames` by assigned `num_frames` */
+    byte_buffer(size_t _num_frames, TYPE* _frames = nullptr) noexcept
+        : frames(new TYPE[_num_frames]{})
+        , num_frames(_num_frames)
     {
-        taglog("<ALOC> byte_frame::ctorA  (_length)\n");
+        if (_frames) std::copy(_frames, _frames + _num_frames, frames);
+
+        taglog("<A|CP> byte_buffer::ctorAC (size_t _num_frames%s)\n"
+        , (_frames)?(""):(", TYPE* _frames"));
     }
 
-/* ctorC (copy from raw pointers) */
-    explicit
-    byte_frame(TYPE* _buffer, uint32_t _length) noexcept
-        : byte_frame(_length)
+/* cpctor (copy constructor) */
+    byte_buffer(const byte_buffer& _src)
+        : byte_buffer(_src.num_frames, _src.frames)
     {
-        std::copy(_buffer, _buffer + _length, buffer);
-
-        taglog("<COPY> byte_frame::ctorC  (_buffer, _length)\n");
+        taglog("<COPY> byte_buffer::cpctor (const byte_buffer& _src)\n");
     }
 
-/* copy ctor */
-    explicit
-    byte_frame(const byte_frame& _src)
-        : byte_frame(_src.buffer, _src.length)
+/* mvctor (move constructor) */
+    byte_buffer(byte_buffer&& _src) noexcept
+        : frames(_src.frames)
+        , num_frames(_src.num_frames)
     {
-        taglog("<COPY> byte_frame::cpctor (const byte_frame& _src)\n");
+        _src.frames = nullptr;
+        _src.num_frames = 0;
+
+        taglog("<MOVE> byte_buffer::mvctor (byte_buffer&& _src)\n");
     }
 
-/* move ctor */
-    explicit
-    byte_frame(byte_frame&& _src) noexcept
-        : buffer(_src.buffer)
-        , length(_src.length)
-    {
-        _src.buffer = nullptr;
-        _src.length = 0;
-
-        taglog("<MOVE> byte_frame::mvctor (byte_frame&& _src)\n");
-    }
-
-/* copy assign */
+/* copy= (copy assignment operator) */
     void
-    operator=(const byte_frame& _rhs)
+    operator=(const byte_buffer& _rhs)
     {
-        if (length == _rhs.length) 
+        if (num_frames == _rhs.num_frames) 
         {
-            std::copy(_rhs.buffer, _rhs.buffer + length, buffer);
+            std::copy(_rhs.frames, _rhs.frames + num_frames, frames);
         } 
-        else // if lengths are different, create new instance
+        else // if num_frames are different, create new instance
         {
-            *this = byte_frame(_rhs);
+            *this = byte_buffer(_rhs);
         }
 
-        taglog("<COPY> byte_frame::copy=  (const byte_frame& _rhs)\n");
+        taglog("<%s> byte_buffer::copy=  (const byte_buffer& _rhs)\n"
+        , (num_frames == _rhs.num_frames)?("COPY"):("    "));
     }
 
-/* move assign */
+/* move= (move assignment operator) */
     void
-    operator=(byte_frame&& _rhs) noexcept
+    operator=(byte_buffer&& _rhs) noexcept
     {
-        std::swap(buffer, _rhs.buffer);
-        std::swap(length, _rhs.length);
+        std::swap(frames, _rhs.frames);
+        std::swap(num_frames, _rhs.num_frames);
 
-        taglog("<MOVE> byte_frame::move=  (byte_frame&& _rhs)\n");
+        taglog("<MOVE> byte_buffer::move=  (byte_buffer&& _rhs)\n");
     }
 
 // custom method section :
 
-/* assert equivalence of member values (no logging) */
-    bool
-    operator==(const byte_frame& _rhs) const
-    {
-        if (length != _rhs.length) return false;
-
-        for (uint32_t i = length; i--;)
-        {
-            if (buffer[i] != _rhs.buffer[i]) return false;
-        }
-        return true;
-    }
-
-/* assert equivalence of member values (no logging) */
-    bool
-    operator!=(const byte_frame& _rhs) const
-    {
-        return !(*this == _rhs);
-    }
-
-/* paste (paste to raw pointers, assigned length) */
+/* paste (paste content of `frames` to raw pointers by assigned `num_frames`) */
     void
-    paste(TYPE* _buffer, uint32_t _length) noexcept
+    paste(TYPE* _des, size_t _num_frames) noexcept
     {
-        std::copy(buffer, buffer + _length, _buffer);
+        std::copy(frames, frames + _num_frames, _des);
 
-        taglog("<COPY> byte_frame::paste  (TYPE* _buffer, uint32_t _length)\n");
+        taglog("<COPY> byte_buffer::paste  (TYPE* _des, size_t _num_frames)\n");
     }
 
-/* paste (paste to raw pointers, default length) */
+/* paste (paste content of `frames` to raw pointers by default `num_frames`) */
     void
-    paste(TYPE* _buffer) noexcept
+    paste(TYPE* _des) noexcept
     {
-        std::copy(buffer, buffer + length, _buffer);
+        std::copy(frames, frames + num_frames, _des);
 
-        taglog("<COPY> byte_frame::paste  (TYPE* _buffer)\n");
+        taglog("<COPY> byte_buffer::paste  (TYPE* _des)\n");
     }
 
-/* copy (copy from raw pointers, assigned length) */
+/* copy (copy content of raw pointers to `frames` by assigned `num_frames`) */
     void
-    copy(TYPE* _buffer, uint32_t _length) noexcept
+    copy(TYPE* _src, size_t _num_frames) noexcept
     {
-        std::copy(_buffer, _buffer + _length, buffer);
+        std::copy(_src, _src + _num_frames, frames);
 
-        taglog("<COPY> byte_frame::copy   (TYPE* _buffer, uint32_t _length)\n");
+        taglog("<COPY> byte_buffer::copy   (TYPE* _src, size_t _num_frames)\n");
     }
 
-/* copy (copy from raw pointers, default length) */
+/* copy (copy content of raw pointers to `frames` by default `num_frames`) */
     void
-    copy(TYPE* _buffer) noexcept
+    copy(TYPE* _src) noexcept
     {
-        std::copy(_buffer, _buffer + length, buffer);
+        std::copy(_src, _src + num_frames, frames);
 
-        taglog("<COPY> byte_frame::copy   (TYPE* _buffer)\n");
+        taglog("<COPY> byte_buffer::copy   (TYPE* _src)\n");
     }
 
 };
 
-#endif //CIIS_BYTE_FRAME_H
+#endif //CIIS_BYTE_BUFFER_H
