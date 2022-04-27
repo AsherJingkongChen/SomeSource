@@ -72,7 +72,7 @@ public:
 /* ctorA */
     explicit
     byte_frame(uint32_t _length)
-        : buffer(new TYPE[_length])
+        : buffer(new TYPE[_length]{})
         , length(_length)
     {
         taglog("<ALOC> byte_frame::ctorA  (_length)\n");
