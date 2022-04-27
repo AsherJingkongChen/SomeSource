@@ -14,6 +14,7 @@
  * Comfortable indentation & Brief comments             [v]
  * Auto fit size to power of Two during construction    [v]
  * Has only important features: enqueue and dequeue     [v]
+ * Whether objects are copied or moved depends on you   [v]
  * 
  * "Simple to use"
  * (However, you need to manage your custom objects on your own.)
