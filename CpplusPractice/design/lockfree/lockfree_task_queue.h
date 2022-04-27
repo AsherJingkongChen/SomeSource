@@ -11,7 +11,7 @@
  * Zero if-else usage                   [v]
  * Auto fit size to power of Two        [v]
  * Safe lock for over-access            [v]
- * Self-documenting & Nice naming       [v]
+ * Self-documenting & Easy naming       [v]
  * Comfortable indentation              [v]
  * Brief comments                       [v]
  * 
@@ -28,7 +28,7 @@
  *
  * - that's all!
  *
- * "Code in C++"
+ * "Code in C++ way"
  */
 
 #ifndef CIIS_LOCKFREE_TASK_QUEUE_H
@@ -45,85 +45,98 @@ private:
     std::atomic<uint32_t>   in  {0};
     std::atomic<uint32_t>   out {0};
     uint32_t                cap;
-    TYPE*                   ringbuf;
+    TYPE*                   buf;
+
+/* rename enum memory_order */
+    static const std::memory_order MO_RLX = std::memory_order_relaxed;
+    static const std::memory_order MO_ACQ = std::memory_order_acquire;
+    static const std::memory_order MO_REL = std::memory_order_release;
 
 /* reduce capacity down to 2^N */
     static inline uint32_t
-    fit(uint32_t c)
+    Fit(uint32_t c)
     {
+        // for 32-bit integer
         c--;
         c |= c >> 1;
         c |= c >> 2;
         c |= c >> 4;
         c |= c >> 8;
-        c |= c >> 16;
+        c |= c >> 16; 
         c++;
 
         return c;
     }
 
-/* index mask */
+/* index masker */
     static inline uint32_t
-    index(uint32_t i, uint32_t c) 
+    At(uint32_t p, uint32_t c) 
     {
-        return i & (c - 1);
+        return p & (c - 1);
     }
 
-/* if full, pause enqueue */
+/* if full, delay enqueue */
     static inline bool
-    full(uint32_t i, uint32_t o, uint32_t c) 
+    Full(uint32_t i, uint32_t o, uint32_t c) 
     {
         return i - o == c;
     }
 
-/* if empty, pause dequeue  */
+/* if empty, delay dequeue */
     static inline bool
-    empty(uint32_t i, uint32_t o) 
+    Empty(uint32_t i, uint32_t o) 
     {
         return i == o;
     }
 
-/* request permission for enqueue */
+/* request to enqueue */
     inline void
     req_enq()
     {
-        while (full(
-            in.load(std::memory_order_relaxed), 
-            out.load(std::memory_order_relaxed), 
+        // wait for `out` updated
+        while (Full(
+            in.load(MO_RLX), 
+            out.load(MO_ACQ),
             cap))
         {
             std::this_thread::yield();
         }
     }
 
-/* request permission for dequeue */
+/* request to dequeue */
     inline void
     req_deq()
     {
-        while (empty(
-            in.load(std::memory_order_relaxed), 
-            out.load(std::memory_order_relaxed)))
+        // wait for `in` updated
+        while (Empty(
+            in.load(MO_ACQ), 
+            out.load(MO_RLX)))
         {
             std::this_thread::yield();
         }
     }
 
 public:
-/* dtor */
+/* dtor (destructor) */
     ~task_queue()
     {
-        delete[] ringbuf;
-        ringbuf = nullptr;
+        delete[] buf;
+        buf = nullptr;
 
         cap = 0;
     }
 
-/* ctorA */
+/* ctorA (allocation constructor) */
+    explicit
     task_queue(uint32_t capacity)
-        : cap(fit(capacity))
-    {
-        ringbuf = new TYPE[cap];
-    }
+        : cap(Fit(capacity))
+        , buf(new TYPE[cap]{}) {}
+
+/* any copy and move operation is not recommended in task_queue */
+    task_queue(const task_queue&)       = delete;
+    task_queue(task_queue&&)            = delete;
+    void operator=(const task_queue&)   = delete;
+    void operator=(task_queue&&)        = delete;
 
 /* enqueue, push, or write (copy assignment) */
     void
@@ -131,12 +144,10 @@ public:
     {
         req_enq();
 
-        uint32_t IN     = in.load(std::memory_order_relaxed);
-        uint32_t OUT    = out.load(std::memory_order_acquire);
+        // copy assigment operator
+        buf[At(in.load(MO_RLX), cap)] = input;
 
-        ringbuf[index(IN, cap)] = input;
-
-        in.store(IN+1, std::memory_order_release);
+        in.fetch_add(1, MO_REL);
     }
 
 /* enqueue, push, or write (move assignment) */
@@ -145,12 +156,10 @@ public:
     {
         req_enq();
 
-        uint32_t IN     = in.load(std::memory_order_relaxed);
-        uint32_t OUT    = out.load(std::memory_order_acquire);
+        // move assignment operator
+        buf[At(in.load(MO_RLX), cap)] = std::move(input);
 
-        ringbuf[index(IN, cap)] = std::move(input);
-
-        in.store(IN+1, std::memory_order_release);
+        in.fetch_add(1, MO_REL);
     }
 
 /* dequeue, pop, or read (copy assignment) */
@@ -159,12 +168,10 @@ public:
     {
         req_deq();
 
-        uint32_t IN     = in.load(std::memory_order_acquire);
-        uint32_t OUT    = out.load(std::memory_order_relaxed);
+        // copy constructor
+        TYPE output(buf[ At(out.load(MO_RLX), cap) ]);
 
-        TYPE output = ringbuf[index(OUT, cap)];
-
-        out.store(OUT+1, std::memory_order_release);
+        out.fetch_add(1, MO_REL);
 
         return output;
     }
@@ -175,12 +182,10 @@ public:
     {
         req_deq();
 
-        uint32_t IN     = in.load(std::memory_order_acquire);
-        uint32_t OUT    = out.load(std::memory_order_relaxed);
+        // move assignment operator
+        output = std::move(buf[ At(out.load(MO_RLX), cap) ]);
 
-        output = std::move(ringbuf[index(OUT, cap)]);
-
-        out.store(OUT+1, std::memory_order_release);
+        out.fetch_add(1, MO_REL);
     }
 
 };
