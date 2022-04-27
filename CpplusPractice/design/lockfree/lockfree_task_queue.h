@@ -1,19 +1,19 @@
 /**
- * task_queue
+ * task_queue,
  * 
- * A C++ Version of lock-free ring buffer
+ * A C++ Version of lock-free queue
  *
- * (Usage on SPSC case guarantees lock-free)
+ * (Usages on SPSC case guarantee lock-free)
  *
- * Atomic implementation (cache miss?)  [v]
- * Use only C++STL                      [v]
- * No mutex, sync-locks, busy loop      [v]
- * Zero if-else usage                   [v]
- * Auto fit size to power of Two        [v]
- * Safe lock for over-access            [v]
- * Self-documenting & Easy naming       [v]
- * Comfortable indentation              [v]
- * Brief comments                       [v]
+ * Atomic and ring-buffer implementation                [v]
+ * Use only C++STL and some C-style                     [v]
+ * No mutex, sync-locks, and busy loop                  [v]
+ * Zero conditional branch except construction          [v]
+ * Safe guard for overbounded operations                [v]
+ * Self-documenting & Easy naming codes                 [v]
+ * Comfortable indentation & Brief comments             [v]
+ * Auto fit size to power of Two during construction    [v]
+ * Has only important features: enqueue and dequeue     [v]
  * 
  * "Simple to use"
  * (However, you need to manage your custom objects on your own.)
@@ -28,7 +28,7 @@
  *
  * - that's all!
  *
- * "Code in C++ way"
+ * "Code in C++"
  */
 
 #ifndef CIIS_LOCKFREE_TASK_QUEUE_H
@@ -39,6 +39,11 @@
 #include <thread>
 #include <utility>
 
+/*
+ * lock-free FIFO container
+ *
+ * Usages on SPSC case guarantee lock-free
+ */
 template<class TYPE>
 class task_queue {
 private:
