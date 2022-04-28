@@ -1,9 +1,9 @@
 /**
- * Ciis' Cplusplus class rule of "2 + basic 6 + custom"
+ * Ciis' Cplusplus class template
  * _1. private members
  * _2. public members + get + set
  * b1. destructor
- * b2. constructors 
+ * b2. constructors (if arguments provided, tag as explicit)
  * b3. copy constructor
  * b4. move constructor
  * b5. copy assignment operator
@@ -14,23 +14,12 @@
 #ifndef CIIS_EMPTYCLASS_H
 #define CIIS_EMPTYCLASS_H
 
-/* inclusion */
-
 class empty_class {
 private:
-/* members */
-    void* ptr;
+
 
 public:
 /* get & set */
-    void* 
-    bond;
-    
-    void*
-    get_ptr() const
-    {
-        return ptr;
-    }
 
 // basic method section :
 
@@ -38,44 +27,27 @@ public:
     ~empty_class() = delete;
 
 /* ctor0 */
-    empty_class()
-        : ptr(nullptr)
-        , bond(nullptr) {}
+    empty_class()  = delete;
 
 /* ctorA */
-    empty_class(size_t _size)
-        : ptr(new char[_size])
-        , bond(nullptr) {}
+    explicit
+    empty_class(size_t _size) = delete;
   
 /* cpctor */
-    empty_class(const empty_class& _src)     {};
+    empty_class(const empty_class& _src) = delete;
   
 /* mvctor */
-    empty_class(empty_class&& _src) noexcept {};
+    empty_class(empty_class&& _src) noexcept = delete;
   
 /* copy = */
     void
-    operator=(const empty_class& _rhs)       {};
+    operator=(const empty_class& _rhs) = delete;
   
 /* move = */
     void
-    operator=(empty_class&& _rhs)   noexcept {};
+    operator=(empty_class&& _rhs) noexcept = delete;
   
 // custom method section :
-  
-/* assert equivalence */
-    bool
-    operator==(const empty_class& _rhs) const
-    {
-        return false; 
-    }
-  
-/* assert equivalence */
-    bool
-    operator!=(const empty_class& _rhs) const
-    {
-        return !(*this == _rhs); 
-    }
 
 };
 
