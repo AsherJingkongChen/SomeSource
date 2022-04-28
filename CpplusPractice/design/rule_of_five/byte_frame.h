@@ -26,12 +26,12 @@
 #endif
 
 /**
- * byte_buffer<TYPE>, an copy-and-paste buffer
+ * byte_buffer<TYPE>, an simple copy-and-paste buffer
  * 
  * :: TYPE*   frames      | array  of frames
  * :: size_t  num_frames  | number of frames 
  * 
- * byte_buffer<TYPE>  -> TYPE frames[num_frames]
+ * byte_buffer<TYPE> ~ TYPE frames[num_frames]
  * 
  * -- the contained data type should be either copyable --
  */
@@ -73,6 +73,7 @@ public:
 
 /* ctorA (allocation constructor) 
    optionally copy content of raw pointers to `frames` by assigned `num_frames` */
+    explicit
     byte_buffer(size_t _num_frames, TYPE* _frames = nullptr) noexcept
         : frames(new TYPE[_num_frames]{})
         , num_frames(_num_frames)
