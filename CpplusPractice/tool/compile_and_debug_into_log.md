@@ -21,7 +21,7 @@ cat test.cpp >> log_test.log
 __Complete version__
 
 ```bash
-export CPP_SRC_CODE=test && \
+export CPP_SRC_CODE=iter && \
 g++ -std=c++17 -g -c -W ${CPP_SRC_CODE}.cpp -o ${CPP_SRC_CODE}.o && \
 g++ -std=c++17 -g -W ${CPP_SRC_CODE}.cpp -o ${CPP_SRC_CODE} && \
 valgrind \
@@ -30,5 +30,7 @@ valgrind \
 ./${CPP_SRC_CODE} > log_${CPP_SRC_CODE}.log \
 2>&1 && \
 cat ${CPP_SRC_CODE}.cpp >> log_${CPP_SRC_CODE}.log && \
-objdump -C -D -S -l ${CPP_SRC_CODE}.o > log_asm.log
+objdump -C -D -S -l ${CPP_SRC_CODE}.o > log_asm.log && \
+open log_asm.log && \
+open log_${CPP_SRC_CODE}.log
 ```
