@@ -2,13 +2,13 @@
 
 I tell only conclusion, and the explanation should lie in testing __log-files under `vector_test` directory__.
 
-#### resize(N) : N * construction
+#### resize(N) : (up to) N * construction
 ```
 size = N
 
 do reserve(N)
 ```
-#### reserve(N) : N * allocation
+#### reserve(N) : (up to) N * allocation
 ```
 capacity = N
 
