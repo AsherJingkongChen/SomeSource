@@ -18,7 +18,7 @@ capacity *= 2
 ```
 #### shrink_to_fit() : (capacity - size) * deallocation
 ```
-after operation, capacity = size
+after shrinking, capacity = size
 ```
 
 #### clear() : (size) * destruction
