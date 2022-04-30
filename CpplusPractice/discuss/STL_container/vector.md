@@ -31,4 +31,4 @@ only destruction but no deallocation happens
 [Memory] capacity <> alloc /realloc <> reserve[+] / shrink[-]
 [Object] size     <> create/delete  <> resize[+]  / clear[-]
 ```
-> NOTE: [Priority] (de)allocation > (con/de)struction
+> NOTE: [Order] allocation -> construction -> destruction -> deallocation
