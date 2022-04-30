@@ -28,7 +28,7 @@ only destruction but no deallocation happens
 
 ### Relationship
 ```
-[First] capacity <> alloc/free <> reserve[+] / shrink[-]
-[Last]  size     <> ctor /dtor <> resize[+]  / clear[-]
+[Memory] capacity <> alloc/free <> reserve[+] / shrink[-]
+[Object]  size     <> ctor /dtor <> resize[+]  / clear[-]
 ```
 > NOTE: [Priority] (de)allocation > (con/de)struction
