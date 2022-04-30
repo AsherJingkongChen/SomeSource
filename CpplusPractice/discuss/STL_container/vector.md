@@ -30,4 +30,5 @@ only destruction but no deallocation happens
 ```
 [First] capacity <> alloc/free <> reserve[+] / shrink[-]
 [Last]  size     <> ctor /dtor <> resize[+]  / clear[-]
+[Priority] (de)allocation > (con/de)struction
 ```
