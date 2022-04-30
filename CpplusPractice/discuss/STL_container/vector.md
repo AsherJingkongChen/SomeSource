@@ -1,4 +1,4 @@
-### Vector::resize, reserve, shrink, clear
+### Vector::resize, reserve, shrink_to_fit, clear
 
 I tell only conclusion, and the explanation should lie in testing __log-files under `vector_test` directory__.
 
@@ -18,7 +18,7 @@ capacity *= 2
 ```
 #### shrink_to_fit() : (capacity - size) * deallocation
 ```
-after shrinking, capacity = size
+after shrunk, capacity = size
 ```
 
 #### clear() : (size) * destruction
