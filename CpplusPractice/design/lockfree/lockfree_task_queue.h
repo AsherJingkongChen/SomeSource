@@ -31,26 +31,18 @@
 #include <atomic>
 #include <cstdint>
 #include <thread>
-#include <utility>
 
 /*
  * lock-free FIFO container
  * guarantees lock-free & thread-safe on SPSC case
  */
-#ifndef CIIS_LOCKFREE_TASK_QUEUE_H
-#define CIIS_LOCKFREE_TASK_QUEUE_H
-
-#include <atomic>
-#include <cstdint>
-#include <thread>
-
 template<class TYPE>
 class task_queue {
 private:
-    std::atomic<size_t>     in  {0};
-    std::atomic<size_t>     out {0};
-    size_t                  cap;
-    TYPE*                   buf;
+    std::atomic<uint64_t>     in{};
+    std::atomic<uint64_t>     out{};
+    uint64_t                  cap;
+    TYPE*                     buf;
 
 // internal method :
 
@@ -61,8 +53,8 @@ private:
     MO_REL = std::memory_order_release;
 
 /* reduce capacity down to 2^N */
-    static constexpr inline size_t
-    Fit(size_t c)
+    static constexpr inline uint64_t
+    Fit(uint64_t c)
     {
         // for 32-bit integer
         c--;
@@ -70,29 +62,30 @@ private:
         c |= c >> 2;
         c |= c >> 4;
         c |= c >> 8;
-        c |= c >> 16; 
+        c |= c >> 16;
+        c |= c >> 32;
         c++;
 
         return c;
     }
 
 /* index masker */
-    static constexpr inline size_t
-    At(size_t p, size_t c) 
+    static constexpr inline uint64_t
+    At(uint64_t p, uint64_t c) 
     {
         return p & (c - 1);
     }
 
 /* if full, delay enqueue */
     static constexpr inline bool
-    Full(size_t i, size_t o, size_t c) 
+    Full(uint64_t i, uint64_t o, uint64_t c) 
     {
         return i - o == c;
     }
 
 /* if empty, delay dequeue */
     static constexpr inline bool
-    Empty(size_t i, size_t o) 
+    Empty(uint64_t i, uint64_t o) 
     {
         return i == o;
     }
@@ -138,7 +131,7 @@ public:
 
 /* ctorA (allocation constructor) */
     explicit
-    task_queue(size_t capacity)
+    task_queue(uint64_t capacity)
         : cap(Fit(capacity))
         , buf(new TYPE[cap]{}) {}
 
@@ -198,7 +191,7 @@ public:
     void
     reset()
     {
-        out.store(in.load(MO_RLX), MO_REL);
+        out.store(in.load(MO_ACQ), MO_REL);
     }
 
 // any copy and move operation is not recommended :
