@@ -6,7 +6,7 @@ compile (-g debug, -W warnings)
 
 -> stderr redirect to stdout
 
-__And you get `log-test.log`__
+__And you get `log_test.log`__
 
 ```bash
 g++ -std=c++17 -g -W test.cpp -o test && \
@@ -35,7 +35,7 @@ open log_asm.log && \
 open log_${CPP_SRC_CODE}.log
 ```
 
-__Edited version 1__
+__Edited version 1 (+ time) (+ Reordered)__
 
 ```
 export CPP_SRC_CODE=test && \
