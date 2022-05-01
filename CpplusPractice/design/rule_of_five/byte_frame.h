@@ -26,38 +26,30 @@
 #endif
 
 /**
- * byte_buffer<TYPE>, an simple copy-and-paste buffer
+ * byte_buffer<TYPE>, a simple copy-and-paste buffer
  * 
  * :: TYPE*   frames      | array  of frames
  * :: size_t  num_frames  | number of frames 
  * 
  * byte_buffer<TYPE> ~ TYPE frames[num_frames]
  * 
- * -- the contained data type should be either copyable --
+ * -- the contained data type should be either copyable or movable --
  */
 template <class TYPE>
 class byte_buffer {
-
-private:
+protected:
     TYPE*   frames;
     size_t  num_frames;
 
 public:
-/* get & set */
-    inline size_t
-    get_num_frames() const
-    {
-        return num_frames;
-    }
-
 // basic method section :
 
 /* dtor (destructor) */
     ~byte_buffer()
     {
         delete[] frames;
+        
         frames = nullptr;
-
         num_frames = 0;
 
         taglog("<DLOC> byte_buffer::destor ()\n");
@@ -68,11 +60,10 @@ public:
         : frames(nullptr)
         , num_frames(0)
     {   
-        taglog("<DCLR> byte_buffer::ctor0  ()\n");
+        taglog("<DECL> byte_buffer::ctor0  ()\n");
     }
 
-/* ctorA (allocation constructor) 
-   optionally copy content of raw pointers to `frames` by assigned `num_frames` */
+/* ctorA (allocation constructor, requiring `num_frames`, optionally copy raw pointer) */
     explicit
     byte_buffer(size_t _num_frames, TYPE* _frames = nullptr) noexcept
         : frames(new TYPE[_num_frames]{})
@@ -80,14 +71,17 @@ public:
     {
         if (_frames) std::copy(_frames, _frames + _num_frames, frames);
 
-        taglog("<A|CP> byte_buffer::ctorAC (size_t _num_frames%s)\n"
-        , (_frames)?(""):(", TYPE* _frames"));
+        taglog("<ALOC> byte_buffer::ctorA (size_t _num_frames%s)\n"
+        , (_frames)?(", TYPE* _frames"):(""));
     }
 
 /* cpctor (copy constructor) */
     byte_buffer(const byte_buffer& _src)
-        : byte_buffer(_src.num_frames, _src.frames)
+        : frames(new TYPE[_src.num_frames]{})
+        , num_frames(_src.num_frames)
     {
+        if (_src.frames) std::copy(_src.frames, _src.frames + _src.num_frames, frames);
+
         taglog("<COPY> byte_buffer::cpctor (const byte_buffer& _src)\n");
     }
 
@@ -131,7 +125,7 @@ public:
 
 // custom method section :
 
-/* paste (paste content of `frames` to raw pointers by assigned `num_frames`) */
+/* paste (copy content of `frames` to raw pointers by assigned `num_frames`) */
     void
     paste(TYPE* _des, size_t _num_frames) noexcept
     {
@@ -140,7 +134,7 @@ public:
         taglog("<COPY> byte_buffer::paste  (TYPE* _des, size_t _num_frames)\n");
     }
 
-/* paste (paste content of `frames` to raw pointers by default `num_frames`) */
+/* paste (copy content of `frames` to raw pointers by default `num_frames`) */
     void
     paste(TYPE* _des) noexcept
     {
