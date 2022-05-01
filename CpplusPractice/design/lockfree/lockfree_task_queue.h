@@ -32,7 +32,6 @@
 
 /*
  * lock-free FIFO container
- *
  * guarantees lock-free & thread-safe on SPSC case
  */
 #ifndef CIIS_LOCKFREE_TASK_QUEUE_H
