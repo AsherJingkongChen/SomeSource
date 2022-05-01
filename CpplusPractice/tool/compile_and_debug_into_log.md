@@ -37,7 +37,7 @@ open log_${CPP_SRC_CODE}.log
 
 __Edited version 1 (+ time) (+ Reordered)__
 
-```
+```bash
 export CPP_SRC_CODE=test && \
 g++ -std=c++17 -g -c -W ${CPP_SRC_CODE}.cpp -o ${CPP_SRC_CODE}.o && \
 g++ -std=c++17 -g -W ${CPP_SRC_CODE}.cpp -o ${CPP_SRC_CODE} && \
