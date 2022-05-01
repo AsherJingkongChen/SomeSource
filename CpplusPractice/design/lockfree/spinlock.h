@@ -12,7 +12,7 @@
  */
 template<class TYPE>
 class spinlock {
-private:
+protected:
     std::atomic_flag lock{};
 
 // internal method :
