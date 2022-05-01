@@ -1,35 +1,25 @@
 /**
  * task_queue,
  * 
- * A C++ Version of lock-free queue
+ * A C++ Version of lock-free queue,
+ * guarantees lock-free & thread-safe on SPSC case.
  *
- * (Usages on SPSC case guarantee lock-free)
+ * Based on atomic and ring-buffer, No mutex, sync-locks.
+ * Self-documenting & Easy naming codes.
  *
- * Atomic and ring-buffer implementation                [v]
- * Use only C++STL and some C-style                     [v]
- * No mutex, sync-locks, and busy loop                  [v]
- * Zero conditional branch except construction          [v]
- * Safe guard for overbounded operations                [v]
- * Self-documenting & Easy naming codes                 [v]
- * Comfortable indentation & Brief comments             [v]
- * Auto fit size to power of Two during construction    [v]
- * Has only important features: enqueue and dequeue     [v]
- * Whether objects are copied or moved depends on you   [v]
+ * Whether objects are copied or moved depends on you.
  * 
  * "Simple to use"
- * (However, you need to manage your custom objects on your own.)
  * 
- * - Single Constructor (rule of zero)
+ * - Single Constructor which determines the capacity (rule of zero)
  *
- * - void enqueue(const TYPE &), void enqueue(TYPE &&)
+ * - void enqueue(const TYPE &) / void enqueue(TYPE &&)
  *     => copy/move assignment
  *
- * - TYPE dequeue(), void dequeue(TYPE &)
+ * - TYPE dequeue() / void dequeue(TYPE &)
  *     => copy/move assignment
  *
  * - that's all!
- *
- * "Code in C++"
  */
 
 #ifndef CIIS_LOCKFREE_TASK_QUEUE_H
@@ -43,24 +33,34 @@
 /*
  * lock-free FIFO container
  *
- * Usages on SPSC case guarantee lock-free
+ * guarantees lock-free & thread-safe on SPSC case
  */
+#ifndef CIIS_LOCKFREE_TASK_QUEUE_H
+#define CIIS_LOCKFREE_TASK_QUEUE_H
+
+#include <atomic>
+#include <cstdint>
+#include <thread>
+
 template<class TYPE>
 class task_queue {
 private:
-    std::atomic<uint32_t>   in  {0};
-    std::atomic<uint32_t>   out {0};
-    uint32_t                cap;
+    std::atomic<size_t>     in  {0};
+    std::atomic<size_t>     out {0};
+    size_t                  cap;
     TYPE*                   buf;
 
-/* rename enum memory_order */
-    static const std::memory_order MO_RLX = std::memory_order_relaxed;
-    static const std::memory_order MO_ACQ = std::memory_order_acquire;
-    static const std::memory_order MO_REL = std::memory_order_release;
+// internal method :
+
+/* rename enum std::memory_order */
+    static constexpr inline std::memory_order  
+    MO_RLX = std::memory_order_relaxed,
+    MO_ACQ = std::memory_order_acquire,
+    MO_REL = std::memory_order_release;
 
 /* reduce capacity down to 2^N */
-    static inline uint32_t
-    Fit(uint32_t c)
+    static constexpr inline size_t
+    Fit(size_t c)
     {
         // for 32-bit integer
         c--;
@@ -75,22 +75,22 @@ private:
     }
 
 /* index masker */
-    static inline uint32_t
-    At(uint32_t p, uint32_t c) 
+    static constexpr inline size_t
+    At(size_t p, size_t c) 
     {
         return p & (c - 1);
     }
 
 /* if full, delay enqueue */
-    static inline bool
-    Full(uint32_t i, uint32_t o, uint32_t c) 
+    static constexpr inline bool
+    Full(size_t i, size_t o, size_t c) 
     {
         return i - o == c;
     }
 
 /* if empty, delay dequeue */
-    static inline bool
-    Empty(uint32_t i, uint32_t o) 
+    static constexpr inline bool
+    Empty(size_t i, size_t o) 
     {
         return i == o;
     }
@@ -123,6 +123,8 @@ private:
     }
 
 public:
+// basic method :
+
 /* dtor (destructor) */
     ~task_queue()
     {
@@ -134,15 +136,11 @@ public:
 
 /* ctorA (allocation constructor) */
     explicit
-    task_queue(uint32_t capacity)
+    task_queue(size_t capacity)
         : cap(Fit(capacity))
         , buf(new TYPE[cap]{}) {}
 
-/* any copy and move operation is not recommended in task_queue */
-    task_queue(const task_queue&)       = delete;
-    task_queue(task_queue&&)            = delete;
-    void operator=(const task_queue&)   = delete;
-    void operator=(task_queue&&)        = delete;
+// custom method :
 
 /* enqueue, push, or write (copy assignment) */
     void
@@ -194,6 +192,18 @@ public:
         out.fetch_add(1, MO_REL);
     }
 
+/* reset (do it after reader and writer being manually stopped) */
+    void
+    reset()
+    {
+        out.store(in.load(MO_RLX), MO_REL);
+    }
+
+// any copy and move operation is not recommended :
+    task_queue(const task_queue&)       = delete;
+    task_queue(task_queue&&)            = delete;
+    void operator=(const task_queue&)   = delete;
+    void operator=(task_queue&&)        = delete;
 };
 
 #endif //CIIS_LOCKFREE_TASK_QUEUE_H
