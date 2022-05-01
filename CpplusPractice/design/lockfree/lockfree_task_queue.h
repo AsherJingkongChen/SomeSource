@@ -19,6 +19,9 @@
  * - TYPE dequeue() / void dequeue(TYPE &)
  *     => copy/move assignment
  *
+ * - void reset()
+ *     => set "size" to zero after both threads are manually stopped
+ *
  * - that's all!
  */
 
