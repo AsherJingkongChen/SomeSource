@@ -5,12 +5,11 @@
 #include <thread>
 
 /**
- * spinlock : atomic flag based spinlock, thread-safe on MPMC case
+ * spinlock : atomic flag based spinlock, thread-safe for MPMC
  * 
  * - enter() | lock, enter the active section
  * - leave() | unlock, leave the recent active section
  */
-template<class TYPE>
 class spinlock {
 protected:
     std::atomic_flag lock{};
@@ -23,6 +22,9 @@ protected:
     MO_REL = std::memory_order_release;
 
 public:
+// basic method :
+    spinlock(){}
+
 // custom method :
 
 /* acquire the lock (spinlock - lock) */
