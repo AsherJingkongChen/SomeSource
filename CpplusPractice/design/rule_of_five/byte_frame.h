@@ -9,10 +9,10 @@
 #if DEBUG_MODE
     #include <stdio.h>
 
-    static uint32_t LN = 0;
+    static uint16_t LN = 0;
 
     #define taglog(...) \
-        printf("<L%6.1u-> | ", ++LN); \
+        printf("<L%5.1hu-> | ", ++LN); \
         printf(__VA_ARGS__)
     #define mark_(s) \
         printf("u ----  %s  ---- u\n", s)
@@ -29,7 +29,7 @@
  * byte_buffer<TYPE>, a simple copy-and-paste buffer
  * 
  * :: TYPE*   frames      | array  of frames
- * :: size_t  num_frames  | number of frames 
+ * :: uint32_t  num_frames  | number of frames 
  * 
  * byte_buffer<TYPE> ~ TYPE frames[num_frames]
  * 
@@ -38,8 +38,8 @@
 template <class TYPE>
 class byte_buffer {
 protected:
-    TYPE*   frames;
-    size_t  num_frames;
+    TYPE*       frames;
+    uint32_t    num_frames;
 
 public:
 // basic method section :
@@ -65,13 +65,13 @@ public:
 
 /* ctorA (allocation constructor, requiring `num_frames`, optionally copy raw pointer) */
     explicit
-    byte_buffer(size_t _num_frames, TYPE* _frames = nullptr) noexcept
+    byte_buffer(uint32_t _num_frames, TYPE* _frames = nullptr) noexcept
         : frames(new TYPE[_num_frames]{})
         , num_frames(_num_frames)
     {
         if (_frames) std::copy(_frames, _frames + _num_frames, frames);
 
-        taglog("<ALOC> byte_buffer::ctorA (size_t _num_frames%s)\n"
+        taglog("<ALOC> byte_buffer::ctorA (uint32_t _num_frames%s)\n"
         , (_frames)?(", TYPE* _frames"):(""));
     }
 
@@ -127,11 +127,11 @@ public:
 
 /* paste (copy content of `frames` to raw pointers by assigned `num_frames`) */
     void
-    paste(TYPE* _des, size_t _num_frames) noexcept
+    paste(TYPE* _des, uint32_t _num_frames) noexcept
     {
         std::copy(frames, frames + _num_frames, _des);
 
-        taglog("<COPY> byte_buffer::paste  (TYPE* _des, size_t _num_frames)\n");
+        taglog("<COPY> byte_buffer::paste  (TYPE* _des, uint32_t _num_frames)\n");
     }
 
 /* paste (copy content of `frames` to raw pointers by default `num_frames`) */
@@ -145,11 +145,11 @@ public:
 
 /* copy (copy content of raw pointers to `frames` by assigned `num_frames`) */
     void
-    copy(TYPE* _src, size_t _num_frames) noexcept
+    copy(TYPE* _src, uint32_t _num_frames) noexcept
     {
         std::copy(_src, _src + _num_frames, frames);
 
-        taglog("<COPY> byte_buffer::copy   (TYPE* _src, size_t _num_frames)\n");
+        taglog("<COPY> byte_buffer::copy   (TYPE* _src, uint32_t _num_frames)\n");
     }
 
 /* copy (copy content of raw pointers to `frames` by default `num_frames`) */
