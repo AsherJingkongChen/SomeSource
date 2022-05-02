@@ -39,9 +39,9 @@
 template<class TYPE>
 class task_queue {
 private:
-    std::atomic<uint64_t>     in{};
-    std::atomic<uint64_t>     out{};
-    uint64_t                  cap;
+    std::atomic<uint32_t>     in{};
+    std::atomic<uint32_t>     out{};
+    uint32_t                  cap;
     TYPE*                     buf;
 
 // internal method :
@@ -53,39 +53,38 @@ private:
     MO_REL = std::memory_order_release;
 
 /* reduce capacity down to 2^N */
-    static constexpr inline uint64_t
-    Fit(uint64_t c)
+    static constexpr inline uint32_t
+    Fit(uint32_t c)
     {
-        // for 64-bit integer
+        // for 32-bit integer
         c--;
         c |= c >> 1;
         c |= c >> 2;
         c |= c >> 4;
         c |= c >> 8;
         c |= c >> 16;
-        c |= c >> 32;
         c++;
 
         return c;
     }
 
 /* index masker */
-    static constexpr inline uint64_t
-    At(uint64_t p, uint64_t c) 
+    static constexpr inline uint32_t
+    At(uint32_t p, uint32_t c) 
     {
         return p & (c - 1);
     }
 
 /* if full, delay enqueue */
     static constexpr inline bool
-    Full(uint64_t i, uint64_t o, uint64_t c) 
+    Full(uint32_t i, uint32_t o, uint32_t c) 
     {
         return i - o == c;
     }
 
 /* if empty, delay dequeue */
     static constexpr inline bool
-    Empty(uint64_t i, uint64_t o) 
+    Empty(uint32_t i, uint32_t o) 
     {
         return i == o;
     }
@@ -131,7 +130,7 @@ public:
 
 /* ctorA (allocation constructor) */
     explicit
-    task_queue(uint64_t capacity)
+    task_queue(uint32_t capacity)
         : cap(Fit(capacity))
         , buf(new TYPE[cap]{}) {}
 
