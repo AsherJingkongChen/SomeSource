@@ -56,7 +56,7 @@ private:
     static constexpr inline uint64_t
     Fit(uint64_t c)
     {
-        // for 32-bit integer
+        // for 64-bit integer
         c--;
         c |= c >> 1;
         c |= c >> 2;
