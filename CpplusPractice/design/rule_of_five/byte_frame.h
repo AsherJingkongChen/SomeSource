@@ -3,16 +3,17 @@
 
 #include <cstdint>
 #include <algorithm>
+#include <functional>
 
 #ifndef DEBUG_MODE
 #define DEBUG_MODE 1
 #if DEBUG_MODE
     #include <stdio.h>
 
-    static uint16_t LN = 0;
+    static uint32_t LN = 0;
 
     #define taglog(...) \
-        printf("<L%5.1hu-> | ", ++LN); \
+        printf("<L%6.1u-> | ", ++LN); \
         printf(__VA_ARGS__)
     #define mark_(s) \
         printf("u ----  %s  ---- u\n", s)
@@ -161,6 +162,56 @@ public:
         taglog("<COPY> byte_buffer::copy   (TYPE* _src)\n");
     }
 
+/* for_each_frame<bool>(buf, [](auto& b){ b = !b; }); */
+    template<class TYPE_R>
+    friend void 
+    for_each_frame(
+        const byte_buffer<TYPE_R>& _result,
+        std::function<void (TYPE_R&)> _unary_operator)
+    {
+        TYPE_R* R_IE = _result.frames + _result.num_frames;
+        TYPE_R* R_II = _result.frames;
+        
+        while (R_II != R_IE)
+        {
+            _unary_operator(*R_II++);
+        }
+    }
+
+/* for_each_frame<int64_t, int32_t>(rbuf, obuf, [](auto& r, auto& o){ r = o / 3; }); */
+    template<class TYPE_R, class TYPE_O>
+    friend void
+    for_each_frame(
+        const byte_buffer<TYPE_R>& _result,
+        const byte_buffer<TYPE_O>& _operand, 
+        std::function<void (TYPE_R&, TYPE_O&)> _binary_operator)
+    {
+        if (_result.num_frames != _operand.num_frames) return;
+
+        TYPE_R* R_IE = _result.frames + _result.num_frames;
+        TYPE_R* R_II = _result.frames;
+        TYPE_O* O_II = _operand.frames;
+        
+        while (R_II != R_IE)
+        {
+            _binary_operator(*R_II++, *O_II++);
+        }
+    }
 };
+
+/* friend of byte_buffer */
+template<class TYPE, class TYPE_R>
+void 
+for_each_frame(
+    const byte_buffer<TYPE_R>&,
+    std::function<void (TYPE_R&)>);
+
+/* friend of byte_buffer */
+template<class TYPE, class TYPE_R, class TYPE_O>
+void
+for_each_frame(
+    const byte_buffer<TYPE_R>&,
+    const byte_buffer<TYPE_O>&, 
+    std::function<void (TYPE_R&, TYPE_O&)>);
 
 #endif //CIIS_BYTE_BUFFER_H
