@@ -69,7 +69,7 @@ __ElemType__ heapPop(Heap* _data)
 	for(; (I << 1) <= _data->size; I = L)
 	{
 		L = (I << 1) | 
-			((I << 1 ^ _data->size) &&
+		    ((I << 1 ^ _data->size) &&
 		     (_data->buffer[I << 1] __HeapComp__ _data->buffer[I << 1 | 1]));
 		
 		if (bottom __HeapComp__ _data->buffer[L])
