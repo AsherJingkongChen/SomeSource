@@ -1,13 +1,9 @@
 #include <stdlib.h> /* malloc */
 
-/* custom typename */
-typedef unsigned int U32;
-typedef unsigned long long U64;
-
 struct HeapBase
 {
 /*** ElementType *******/
-#define __ElemType__ U32
+#define __ElemType__ int
 /***********************/
 #define __ExceptionValue__ \
 	(((__ElemType__)-1 < 0) << (sizeof(__ElemType__) * 8 - 1))
