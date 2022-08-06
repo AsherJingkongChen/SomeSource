@@ -1,3 +1,4 @@
+```
 #include <stdlib.h> /* malloc */
 
 /* custom typename */
@@ -79,3 +80,4 @@ __ElemType__ heapPop(Heap* _data)
 	_data->buffer[I] = bottom;
 	return top;
 }
+```
