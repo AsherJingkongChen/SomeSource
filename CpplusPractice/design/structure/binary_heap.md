@@ -1,4 +1,4 @@
-```
+```h
 #include <stdlib.h> /* malloc */
 
 /* custom typename */
