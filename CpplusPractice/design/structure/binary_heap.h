@@ -29,6 +29,11 @@ struct HeapBase
 };
 typedef struct HeapBase Heap;
 
+Heap* heapAlloc(size_t);
+void heapDealloc(Heap**);
+void heapPush(Heap*, __ElemType__);
+__ElemType__ heapPop(Heap*);
+
 Heap* heapAlloc(size_t _cap)
 {
 	Heap* d = (Heap *)malloc(sizeof(Heap));
