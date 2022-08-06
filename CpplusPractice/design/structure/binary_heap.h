@@ -1,4 +1,4 @@
-#include <stdlib.h> /* malloc */
+#include <stdlib.h> /* C malloc */
 
 /* custom typename */
 typedef unsigned int U32;
